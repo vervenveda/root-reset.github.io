@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Village — Dynamic + Sound + Particles + Dev Panel</title>
+<style>
+:root{
+  --bg:#050508; --ink:#f2f2ee; --muted:#a0a0a8; --warm:#e6c27a; --soft:#1a1a22;
+  --card:#0e0e16; --radius:18px; --shadow:0 30px 80px rgba(0,0,0,.6);
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%; margin:0}
+body{
+  background:radial-gradient(circle at top, #0b0b14, var(--bg));
+  color:var(--ink); display:flex; align-items:center; justify-content:center;
+}
+.app{width:100%; max-width:920px; padding:20px;}
+.card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; display:grid; gap:14px}
+.header{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.title{font-weight:700; letter-spacing:.12em; text-transform:uppercase}
+.subtitle{color:var(--muted); font-size:13px}
+.container{display:grid; grid-template-columns:1fr 420px; gap:18px}
+@media (max-width:840px){
+  .container{grid-template-columns:1fr; }
+}
+.left{display:grid; gap:12px}
+canvas{width:100%; height:360px; border-radius:14px; background:#06060a; display:block}
+.village{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+@media (max-width:560px){
+  .village{grid-template-columns:1fr;}
+}
+.npc{background:var(--soft); border-radius:14px; padding:12px; cursor:pointer; transition:transform .18s, box-shadow .18s; outline:none}
+.npc:focus{box-shadow:0 14px 36px rgba(255,255,255,.04), 0 0 0 4px rgba(123,231,255,.06); transform:translateY(-2px);}
+.npc h2{margin:0; font-size:14px}
+.npc p{margin:6px 0 0; color:var(--muted); font-size:13px}
+.warmth{height:6px; border-radius:6px; margin-top:10px; background:linear-gradient(90deg,var(--warm), rgba(230,194,122,.2)); transition:transform .28s, opacity .28s}
+.controls{display:grid; gap:10px}
+.btn{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.05); background:rgba(255,255,255,.02); color:var(--ink); cursor:pointer; font-size:13px}
+.btn:hover{background:rgba(255,255,255,.05);}
+.footer{color:var(--muted); font-size:12px}
+.dev-toggle{position:fixed; right:18px; bottom:18px; z-index:999; background:linear-gradient(180deg,#ffd67a,#ff8a5b); color:#07143a; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,.4)}
+.dev-panel{position:fixed; right:18px; bottom:68px; width:320px; background:rgba(8,10,14,.98); border-radius:12px; padding:12px; box-shadow:0 30px 80px rgba(0,0,0,.6); color:var(--muted); z-index:999}
+.dev-panel h4{margin:0 0 8px 0; color:var(--ink)}
+.row{display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:8px}
+.input-range{width:160px}
+.small{font-size:12px; color:var(--muted)}
+.checkbox{display:flex; gap:8px; align-items:center}
+.note{font-size:12px; color:#9aa}
+
+/* Village Log */
+.log-panel{
+  background:rgba(255,255,255,.02);
+  padding:12px;
+  border-radius:12px;
+  display:grid;
+  gap:6px;
+}
+.log-title{font-weight:900; font-size:13px}
+.log-sub{font-size:11px; color:var(--muted);}
+.log-list{
+  max-height:120px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.log-entry{
+  font-size:11px;
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+.log-entry span.label{
+  color:var(--warm);
+  font-weight:600;
+}
+.log-entry span.time{
+  opacity:.8;
+}
+.log-empty{
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* Tour overlay */
+.tour-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:900;
+}
+.tour-card{
+  background:#0e0e16;
+  border-radius:16px;
+  padding:18px;
+  max-width:360px;
+  width:calc(100% - 40px);
+  box-shadow:var(--shadow);
+}
+.tour-card h3{
+  margin:0 0 8px;
+  font-size:16px;
+}
+.tour-card p,
+.tour-card li{
+  font-size:13px;
+  color:var(--muted);
+}
+.tour-card ul{
+  padding-left:18px;
+  margin:8px 0 12px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <div class="header">
+      <div>
+        <div class="title">The Village</div>
+        <div class="subtitle">Dynamic, gentle, local — now with sound, TTS, drifting leaves, and a tiny log.</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center">
+        <button id="btnEnableSound" class="btn">Enable Sound</button>
+        <button id="btnReset" class="btn">Reset Village</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="left">
+        <canvas id="scene" aria-hidden="true"></canvas>
+        <div class="village" id="village" aria-live="polite"></div>
+        <div class="footer">No scores. No failure. Everything waits.</div>
+      </div>
+
+      <aside class="controls">
+        <div style="background:rgba(255,255,255,.03); padding:12px; border-radius:12px">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div style="font-weight:900">Status</div>
+            <div id="status" class="small">Ready</div>
+          </div>
+          <div style="height:8px"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button id="btnShuffle" class="btn">Shuffle</button>
+            <button id="btnTour" class="btn">Mini Tour</button>
+          </div>
+          <div style="height:10px"></div>
+          <div class="note">Tweak visuals in the Dev Panel (lower-right).</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.02); padding:12px; border-radius:12px">
+          <div style="font-weight:900; margin-bottom:6px">Power-ups (demo)</div>
+          <div class="small">Click nodes to collect soft pulses, sound, and particles.</div>
+        </div>
+
+        <div class="log-panel">
+          <div class="log-title">Village Log</div>
+          <div class="log-sub">Last 10 visits, stored only in this browser.</div>
+          <div id="logList" class="log-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- Tour Overlay -->
+<div id="tourOverlay" class="tour-overlay" aria-hidden="true">
+  <div class="tour-card" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+    <h3 id="tourTitle">Welcome to The Village</h3>
+    <p>Think of this as a tiny constellation of places inside you.</p>
+    <ul>
+      <li>Click a tile (Rest, Boundaries, Creativity, Help) to visit it.</li>
+      <li>Each visit warms that node, sends a soft pulse, and logs it locally.</li>
+      <li>Use the Dev button (bottom-right) to gently tune the visuals and particles.</li>
+      <li>Enable Sound if you’d like quiet chimes and optional voice.</li>
+    </ul>
+    <p class="small">Nothing expires. Nothing judges. Everything waits until you’re ready.</p>
+    <button id="tourClose" class="btn" style="margin-top:8px;">Got it</button>
+  </div>
+</div>
+
+<button id="devToggle" class="dev-toggle" aria-pressed="false">Dev</button>
+
+<div id="devPanel" class="dev-panel" style="display:none" aria-hidden="true">
+  <h4>Developer Panel</h4>
+
+  <div class="row"><div class="small">Orbit speed</div><input id="inpOrbit" class="input-range" type="range" min="0.04" max="0.6" step="0.02" value="0.18"></div>
+  <div class="row"><div class="small">Orbit variance</div><input id="inpVariance" class="input-range" type="range" min="0" max="0.25" step="0.01" value="0.07"></div>
+  <div class="row"><div class="small">Base radius</div><input id="inpBaseR" class="input-range" type="range" min="24" max="110" step="2" value="48"></div>
+  <div class="row"><div class="small">Radius gain</div><input id="inpGain" class="input-range" type="range" min="20" max="220" step="4" value="72"></div>
+  <div class="row"><div class="small">Pulse decay</div><input id="inpPulse" class="input-range" type="range" min="0.6" max="4.0" step="0.1" value="1.8"></div>
+
+  <hr style="border:none; height:8px">
+  <div class="row"><div class="small">Particles</div><input id="inpParticles" class="input-range" type="range" min="8" max="200" step="4" value="56"></div>
+  <div class="row"><div class="small">Particle speed</div><input id="inpPspeed" class="input-range" type="range" min="8" max="140" step="4" value="48"></div>
+
+  <hr style="border:none; height:8px">
+  <div class="checkbox"><label class="small"><input id="chkSound" type="checkbox"> Sound (chime)</label></div>
+  <div class="checkbox"><label class="small"><input id="chkTTS" type="checkbox"> Voice (TTS)</label></div>
+
+  <div style="height:8px"></div>
+  <div style="display:flex; gap:8px">
+    <button id="btnApply" class="btn">Apply</button>
+    <button id="btnRestore" class="btn">Restore Defaults</button>
+  </div>
+  <div style="height:8px"></div>
+  <div class="small note">Changes persist locally and update visuals immediately.</div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* -------------------------
+   Keys & helpers
+   ------------------------- */
+const PREF_KEY = "village_prefs_v3";
+const SAVE_STATE_KEY = "village_state_v3";
+const LOG_KEY = "village_visit_log_v1";
+
+function loadJSON(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return parsed ?? fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+function saveJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+}
+
+/* -------------------------
+   Prefs
+   ------------------------- */
+let PREF = loadJSON(PREF_KEY, {});
+
+/* -------------------------
+   Base NPCs
+   ------------------------- */
+const BASE_NPCS = [
+  {id:"rest",       label:"Rest",       desc:"A place to sit. Nothing required.", warmth:0.8},
+  {id:"boundaries", label:"Boundaries", desc:"Things feel defined here.",         warmth:0.7},
+  {id:"creativity", label:"Creativity", desc:"Color lingers.",                   warmth:0.6},
+  {id:"help",       label:"Help",       desc:"Someone nearby.",                  warmth:0.75}
+];
+
+/* -------------------------
+   Defaults for parameters
+   ------------------------- */
+const DEFAULTS = {
+  ORBIT_SPEED: 0.18,
+  ORBIT_VARIANCE: 0.07,
+  BASE_RADIUS: 48,
+  RADIUS_GAIN: 72,
+  PULSE_DECAY: 1.8,
+  PARTICLE_COUNT: 56,
+  PARTICLE_SPEED: 48,
+  SOUND_ENABLED: false,
+  TTS_ENABLED: false
+};
+
+/* -------------------------
+   In-memory runtime params
+   ------------------------- */
+let PARAMS = {
+  ORBIT_SPEED: PREF.orbitSpeed ?? DEFAULTS.ORBIT_SPEED,
+  ORBIT_VARIANCE: PREF.orbitVar ?? DEFAULTS.ORBIT_VARIANCE,
+  BASE_RADIUS: PREF.baseR ?? DEFAULTS.BASE_RADIUS,
+  RADIUS_GAIN: PREF.gain ?? DEFAULTS.RADIUS_GAIN,
+  PULSE_DECAY: PREF.pulseDecay ?? DEFAULTS.PULSE_DECAY,
+  PARTICLE_COUNT: PREF.pCount ?? DEFAULTS.PARTICLE_COUNT,
+  PARTICLE_SPEED: PREF.pSpeed ?? DEFAULTS.PARTICLE_SPEED,
+  SOUND_ENABLED: PREF.sound ?? DEFAULTS.SOUND_ENABLED,
+  TTS_ENABLED: PREF.tts ?? DEFAULTS.TTS_ENABLED
+};
+
+/* -------------------------
+   Load state (warmth)
+   ------------------------- */
+function mergeWithBase(saved){
+  // ensure we always have the base nodes, merging warmth if present
+  const byId = new Map(saved.map(s => [s.id, s]));
+  return BASE_NPCS.map(b => {
+    const s = byId.get(b.id);
+    return {
+      id: b.id,
+      label: b.label,
+      desc: b.desc,
+      warmth: s && typeof s.warmth === "number" ? s.warmth : b.warmth
+    };
+  });
+}
+
+function loadState(){
+  const saved = loadJSON(SAVE_STATE_KEY, null);
+  if(!saved || !Array.isArray(saved) || !saved.length){
+    return mergeWithBase([]);
+  }
+  return mergeWithBase(saved);
+}
+
+let state = loadState();
+
+/* -------------------------
+   Attach animation fields per node
+   ------------------------- */
+function initNodeAnim(n){
+  n._angleOffset = Math.random()*Math.PI*2;
+  n._angVel = PARAMS.ORBIT_SPEED + (Math.random()*PARAMS.ORBIT_VARIANCE*2 - PARAMS.ORBIT_VARIANCE);
+  n._pulse = 0;
+  n._wiggle = Math.random();
+  n._lastEmit = 0;
+}
+state.forEach(initNodeAnim);
+
+/* -------------------------
+   Visit log
+   ------------------------- */
+let visitLog = loadJSON(LOG_KEY, []);
+if(!Array.isArray(visitLog)) visitLog = [];
+
+function addLogEntry(node){
+  visitLog.push({
+    ts: new Date().toISOString(),
+    id: node.id,
+    label: node.label,
+    warmth: node.warmth
+  });
+  if(visitLog.length > 10){
+    visitLog = visitLog.slice(visitLog.length - 10);
+  }
+  saveJSON(LOG_KEY, visitLog);
+  renderLog();
+}
+
+/* -------------------------
+   DOM refs
+   ------------------------- */
+const canvas = document.getElementById("scene");
+const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+const villageEl = document.getElementById("village");
+const statusEl = document.getElementById("status");
+const devToggle = document.getElementById("devToggle");
+const devPanel = document.getElementById("devPanel");
+const logListEl = document.getElementById("logList");
+const tourOverlay = document.getElementById("tourOverlay");
+const tourClose = document.getElementById("tourClose");
+
+/* -------------------------
+   Particles system
+   ------------------------- */
+let particles = []; // {x,y, vx, vy, size, life, age, color, alpha}
+let cssW = 0, cssH = 0;
+
+function spawnParticle(cx, cy){
+  const angle = Math.random()*Math.PI*2;
+  const baseSpeed = (PARAMS.PARTICLE_SPEED/100) * (8 + Math.random()*56);
+  const vx = Math.cos(angle) * baseSpeed * (0.6 + Math.random()*0.9);
+  const vy = Math.sin(angle) * baseSpeed * (0.6 + Math.random()*0.9);
+  const size = 2 + Math.random()*6;
+  const life = 0.7 + Math.random()*1.6;
+  const hue = 42 + Math.floor(Math.random()*8) - 4;
+  const sat = 70 + Math.floor(Math.random()*20);
+  const light = 46 + Math.floor(Math.random()*14);
+  const color = `hsl(${hue} ${sat}% ${light}%)`;
+  particles.push({x:cx, y:cy, vx, vy, size, life, age:0, color, alpha:1});
+}
+
+/* ambient emitter occasionally */
+let lastAmbientAt = performance.now();
+
+/* -------------------------
+   Audio (WebAudio gentle chime)
+   ------------------------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(audioCtx) return audioCtx;
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    audioCtx = new AC();
+    // tiny unlock
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = 0;
+    g.gain.value = 0;
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + 0.01);
+    return audioCtx;
+  }catch(e){
+    console.warn("Audio unavailable", e);
+    audioCtx = null;
+    return null;
+  }
+}
+
+function softChime(){
+  if(!PARAMS.SOUND_ENABLED) return;
+  const actx = ensureAudio();
+  if(!actx) return;
+  try{
+    if(actx.state === "suspended"){ actx.resume().catch(()=>{}); }
+    const now = actx.currentTime;
+    const o = actx.createOscillator();
+    const g = actx.createGain();
+    o.type = "sine";
+    o.frequency.value = 660 + Math.random()*220;
+    g.gain.value = 0.0;
+    o.connect(g); g.connect(actx.destination);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.06, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+    o.start(now);
+    o.stop(now + 0.32);
+  }catch(e){}
+}
+
+/* -------------------------
+   TTS (short gentle phrases)
+   ------------------------- */
+function speakShort(phrase){
+  if(!PARAMS.TTS_ENABLED) return;
+  try{
+    const s = window.speechSynthesis;
+    if(!s) return;
+    const ut = new SpeechSynthesisUtterance(phrase);
+    ut.volume = 0.7;
+    ut.rate = 0.92;
+    ut.pitch = 1.05;
+    const voices = s.getVoices();
+    if(voices && voices.length){
+      let v = voices.find(v=>/serene|alloy|samantha|victoria|google/i.test(v.name));
+      if(!v) v = voices.find(v=>v.lang && v.lang.startsWith("en"));
+      if(v) ut.voice = v;
+    }
+    s.cancel();
+    s.speak(ut);
+  }catch(e){}
+}
+
+/* -------------------------
+   Interaction: engage a node
+   ------------------------- */
+function status(txt){ statusEl.textContent = txt; }
+
+let saveTimer = null;
+function scheduleSave(delay=900){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=> {
+    const compact = state.map(s => ({
+      id:s.id,
+      label:s.label,
+      desc:s.desc,
+      warmth:s.warmth
+    }));
+    saveJSON(SAVE_STATE_KEY, compact);
+    status("Saved");
+  }, delay);
+}
+
+function engageNode(id){
+  const n = state.find(x=>x.id===id);
+  if(!n) return;
+  n.warmth = Math.min(1, n.warmth + 0.12 + Math.random()*0.18);
+  n._pulse = 1.4;
+  n._wiggle += 0.4 + Math.random()*0.9;
+  n._lastEmit = performance.now();
+
+  softChime();
+  if(PARAMS.TTS_ENABLED){
+    const phrases = [
+      "You're welcome.",
+      "Hello, friend.",
+      "There is time.",
+      "Take a breath."
+    ];
+    speakShort(phrases[Math.floor(Math.random()*phrases.length)]);
+  }
+
+  addLogEntry(n);
+  status(`You visited ${n.label}.`);
+  renderNodes();
+  scheduleSave();
+}
+
+/* -------------------------
+   Render DOM nodes (cards)
+   ------------------------- */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"]/g, c => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;'}[c] || c
+  ));
+}
+
+function renderNodes(){
+  villageEl.innerHTML = "";
+  state.forEach(n=>{
+    const div = document.createElement("div");
+    div.className = "npc";
+    div.setAttribute("role","button");
+    div.tabIndex = 0;
+    div.setAttribute("aria-label", `${n.label}. ${n.desc}. Warmth ${Math.round(n.warmth*100)} percent.`);
+    const scale = 1 + (n._pulse ? 0.04 * n._pulse : 0);
+    div.style.transform = `scale(${scale})`;
+    div.innerHTML = `
+      <h2>${escapeHtml(n.label)}</h2>
+      <p>${escapeHtml(n.desc)}</p>
+      <div class="warmth" style="transform:scaleX(${n.warmth}); opacity:${0.62 + n.warmth*0.38}"></div>
+    `;
+    div.addEventListener("click", ()=> doEngage(n));
+    div.addEventListener("keydown", ev => {
+      if(ev.key==="Enter" || ev.key===" "){
+        ev.preventDefault();
+        doEngage(n);
+      }
+    });
+    villageEl.appendChild(div);
+  });
+}
+
+function doEngage(n){
+  if(PARAMS.SOUND_ENABLED) ensureAudio();
+  engageNode(n.id);
+}
+
+/* -------------------------
+   Canvas HiDPI setup
+   ------------------------- */
+function resizeCanvas(){
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.round(rect.width * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  if(ctx && typeof ctx.setTransform === "function") ctx.setTransform(dpr,0,0,dpr,0,0);
+  cssW = rect.width;
+  cssH = rect.height;
+}
+
+/* -------------------------
+   Drawing & animation
+   ------------------------- */
+let lastFrame = performance.now();
+let lastDriftAt = performance.now();
+const DRIFT_INTERVAL = 1000;
+
+function driftTick(){
+  let changed = false;
+  state.forEach(n=>{
+    if(Math.random() < 0.25){
+      n.warmth -= (Math.random()*0.006) + 0.002;
+      if(n.warmth < 0.05) n.warmth = 0.05;
+      if(n.warmth > 1) n.warmth = 1;
+      changed = true;
+    }
+  });
+  if(changed) scheduleSave();
+}
+
+function nodeToCanvasPos(n, now){
+  const t = now/1000;
+  const baseAngle = n._angleOffset + (t * n._angVel);
+  const wob = Math.sin(t * (0.5 + n._wiggle*0.9)) * 0.08;
+  const angle = baseAngle + wob;
+  const radius = PARAMS.BASE_RADIUS + (n.warmth * PARAMS.RADIUS_GAIN) + Math.sin(t*0.5)*6;
+  const cx = cssW/2, cy = cssH/2;
+  const x = cx + Math.cos(angle) * radius;
+  const y = cy + Math.sin(angle) * radius;
+  return {x,y};
+}
+
+function ambientEmit(now){
+  const n = state[Math.floor(Math.random()*state.length)];
+  const pos = nodeToCanvasPos(n, now);
+  const count = 2 + Math.floor(Math.random()*4);
+  for(let i=0;i<count;i++){
+    spawnParticle(pos.x + (Math.random()-0.5)*8, pos.y + (Math.random()-0.5)*8);
+  }
+}
+
+function updateParticles(dt){
+  const maxCount = Math.max(8, Math.floor(PARAMS.PARTICLE_COUNT));
+  if(particles.length > maxCount){
+    particles.splice(0, particles.length - maxCount);
+  }
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.age += dt;
+    const t = p.age / p.life;
+    p.x += p.vx * dt * 0.7;
+    p.y += p.vy * dt * 0.7 + Math.sin(p.age*3)*0.2;
+    p.alpha = Math.max(0, 1 - t);
+    if(p.age >= p.life) particles.splice(i,1);
+  }
+}
+
+function draw(now){
+  if(!ctx) return;
+  ctx.clearRect(0,0,cssW,cssH);
+
+  // soft vertical wash
+  ctx.save();
+  const g = ctx.createLinearGradient(0,0,0,cssH);
+  g.addColorStop(0, "rgba(6,8,12,0.0)");
+  g.addColorStop(1, "rgba(4,6,10,0.24)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,cssW,cssH);
+  ctx.restore();
+
+  const cx = cssW/2, cy = cssH/2;
+
+  // faint orbit rings
+  ctx.save();
+  ctx.globalAlpha = 0.045;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 1;
+  state.forEach(n=>{
+    const radius = PARAMS.BASE_RADIUS + (n.warmth * PARAMS.RADIUS_GAIN);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI*2);
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  // particles behind nodes
+  ctx.save();
+  particles.forEach(p=>{
+    ctx.globalAlpha = p.alpha * 0.95;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, p.size, p.size*0.7, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.restore();
+
+  // nodes with glow + ring pulse
+  const nowMs = performance.now();
+  state.forEach(n=>{
+    const pos = nodeToCanvasPos(n, now);
+    if(n._pulse > 0.003){
+      const p = n._pulse;
+      const ringR = 10 + (1-p) * 120 * (0.8 + n.warmth*0.6);
+      const alpha = 0.25 * p * (0.9 + n.warmth*0.2);
+      ctx.beginPath();
+      ctx.lineWidth = 1.6 + p*3;
+      ctx.strokeStyle = `rgba(230,194,122,${alpha})`;
+      ctx.arc(pos.x, pos.y, ringR, 0, Math.PI*2);
+      ctx.stroke();
+    }
+
+    const glowR = 8 + n.warmth * 22;
+    const grad = ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,glowR*1.8);
+    grad.addColorStop(0, `rgba(230,194,122,${0.32 + n.warmth*0.3})`);
+    grad.addColorStop(0.6, `rgba(230,194,122,${0.06 + n.warmth*0.06})`);
+    grad.addColorStop(1, "rgba(230,194,122,0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(pos.x,pos.y,glowR*1.6,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(230,194,122,${0.9 - (1-n.warmth)*0.6})`;
+    ctx.arc(pos.x,pos.y,5 + n.warmth*8,0,Math.PI*2);
+    ctx.fill();
+
+    // burst particles after emit
+    if(n._lastEmit && nowMs - n._lastEmit < 600){
+      const burst = 4 + Math.floor(Math.random()*6);
+      for(let i=0;i<burst;i++){
+        spawnParticle(pos.x + (Math.random()-0.5)*8, pos.y + (Math.random()-0.5)*8);
+      }
+      n._lastEmit = 0;
+    }
+  });
+}
+
+function loop(now = performance.now()){
+  const dt = Math.max(0.0008, (now - lastFrame)/1000);
+  lastFrame = now;
+
+  // time-based drift of warmth
+  if(now - lastDriftAt >= DRIFT_INTERVAL){
+    driftTick();
+    lastDriftAt = now;
+  }
+
+  // decay pulses
+  state.forEach(n=>{
+    n._pulse = Math.max(0, n._pulse - dt * PARAMS.PULSE_DECAY);
+  });
+
+  // ambient particle emissions
+  if(now - lastAmbientAt > 650 + Math.random()*800){
+    ambientEmit(now);
+    lastAmbientAt = now;
+  }
+
+  updateParticles(dt);
+  draw(now);
+  requestAnimationFrame(loop);
+}
+
+/* -------------------------
+   Dev panel wiring
+   ------------------------- */
+function bindDevPanel(){
+  const inpOrbit = document.getElementById("inpOrbit");
+  const inpVariance = document.getElementById("inpVariance");
+  const inpBaseR = document.getElementById("inpBaseR");
+  const inpGain = document.getElementById("inpGain");
+  const inpPulse = document.getElementById("inpPulse");
+  const inpParticles = document.getElementById("inpParticles");
+  const inpPspeed = document.getElementById("inpPspeed");
+  const chkSound = document.getElementById("chkSound");
+  const chkTTS = document.getElementById("chkTTS");
+
+  function refreshInputs(){
+    inpOrbit.value = PARAMS.ORBIT_SPEED;
+    inpVariance.value = PARAMS.ORBIT_VARIANCE;
+    inpBaseR.value = PARAMS.BASE_RADIUS;
+    inpGain.value = PARAMS.RADIUS_GAIN;
+    inpPulse.value = PARAMS.PULSE_DECAY;
+    inpParticles.value = PARAMS.PARTICLE_COUNT;
+    inpPspeed.value = PARAMS.PARTICLE_SPEED;
+    chkSound.checked = PARAMS.SOUND_ENABLED;
+    chkTTS.checked = PARAMS.TTS_ENABLED;
+  }
+  refreshInputs();
+
+  document.getElementById("btnApply").onclick = () => {
+    PARAMS.ORBIT_SPEED = parseFloat(inpOrbit.value);
+    PARAMS.ORBIT_VARIANCE = parseFloat(inpVariance.value);
+    PARAMS.BASE_RADIUS = parseFloat(inpBaseR.value);
+    PARAMS.RADIUS_GAIN = parseFloat(inpGain.value);
+    PARAMS.PULSE_DECAY = parseFloat(inpPulse.value);
+    PARAMS.PARTICLE_COUNT = parseInt(inpParticles.value,10);
+    PARAMS.PARTICLE_SPEED = parseFloat(inpPspeed.value);
+    PARAMS.SOUND_ENABLED = chkSound.checked;
+    PARAMS.TTS_ENABLED = chkTTS.checked;
+
+    PREF.orbitSpeed = PARAMS.ORBIT_SPEED;
+    PREF.orbitVar = PARAMS.ORBIT_VARIANCE;
+    PREF.baseR = PARAMS.BASE_RADIUS;
+    PREF.gain = PARAMS.RADIUS_GAIN;
+    PREF.pulseDecay = PARAMS.PULSE_DECAY;
+    PREF.pCount = PARAMS.PARTICLE_COUNT;
+    PREF.pSpeed = PARAMS.PARTICLE_SPEED;
+    PREF.sound = PARAMS.SOUND_ENABLED;
+    PREF.tts = PARAMS.TTS_ENABLED;
+    saveJSON(PREF_KEY, PREF);
+
+    state.forEach(n=>{
+      n._angVel = PARAMS.ORBIT_SPEED + (Math.random()*PARAMS.ORBIT_VARIANCE*2 - PARAMS.ORBIT_VARIANCE);
+    });
+
+    status("Dev settings applied");
+  };
+
+  document.getElementById("btnRestore").onclick = () => {
+    PARAMS = {...DEFAULTS};
+    PREF = {};
+    saveJSON(PREF_KEY, PREF);
+    state.forEach(initNodeAnim);
+    refreshInputs();
+    status("Defaults restored");
+  };
+
+  devToggle.onclick = () => {
+    const open = devPanel.style.display !== "block";
+    devPanel.style.display = open ? "block" : "none";
+    devToggle.setAttribute("aria-pressed", String(open));
+  };
+}
+
+/* -------------------------
+   Log rendering
+   ------------------------- */
+function renderLog(){
+  if(!logListEl) return;
+  if(!visitLog.length){
+    logListEl.innerHTML = `<div class="log-empty">No visits yet. Click any tile to begin.</div>`;
+    return;
+  }
+  const items = visitLog.slice().reverse(); // latest first
+  logListEl.innerHTML = "";
+  items.forEach(entry=>{
+    const time = new Date(entry.ts).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+    const warmPct = Math.round((entry.warmth ?? 0)*100);
+    const row = document.createElement("div");
+    row.className = "log-entry";
+    row.innerHTML = `
+      <span class="label">${escapeHtml(entry.label || "Node")}</span>
+      <span class="time">${warmPct}% · ${time}</span>
+    `;
+    logListEl.appendChild(row);
+  });
+}
+
+/* -------------------------
+   Tour overlay wiring
+   ------------------------- */
+function bindTour(){
+  const btnTour = document.getElementById("btnTour");
+  btnTour.addEventListener("click", () => {
+    tourOverlay.style.display = "flex";
+    tourOverlay.setAttribute("aria-hidden", "false");
+  });
+  tourClose.addEventListener("click", () => {
+    tourOverlay.style.display = "none";
+    tourOverlay.setAttribute("aria-hidden", "true");
+  });
+  tourOverlay.addEventListener("click", (e)=>{
+    if(e.target === tourOverlay){
+      tourOverlay.style.display = "none";
+      tourOverlay.setAttribute("aria-hidden", "true");
+    }
+  });
+}
+
+/* -------------------------
+   Other UI wiring
+   ------------------------- */
+document.getElementById("btnEnableSound").addEventListener("click", ()=>{
+  PARAMS.SOUND_ENABLED = true;
+  PARAMS.TTS_ENABLED = true;
+  PREF.sound = true;
+  PREF.tts = true;
+  saveJSON(PREF_KEY, PREF);
+  ensureAudio();
+  status("Sound & TTS enabled");
+  document.getElementById("chkSound").checked = true;
+  document.getElementById("chkTTS").checked = true;
+});
+
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  if(!confirm("Reset village to defaults?")) return;
+  state = mergeWithBase([]);
+  state.forEach(initNodeAnim);
+  scheduleSave(0);
+  status("Village reset");
+  renderNodes();
+  visitLog = [];
+  saveJSON(LOG_KEY, visitLog);
+  renderLog();
+});
+
+document.getElementById("btnShuffle").addEventListener("click", ()=>{
+  state.forEach(n=> n.warmth = Math.max(0.05, Math.random()*0.9));
+  status("Shuffled warmth");
+  scheduleSave();
+  renderNodes();
+});
+
+/* -------------------------
+   Init & start
+   ------------------------- */
+function init(){
+  resizeCanvas();
+  renderNodes();
+  renderLog();
+  bindDevPanel();
+  bindTour();
+  window.addEventListener("resize", resizeCanvas);
+  requestAnimationFrame(loop);
+}
+init();
+
+})();
+</script>
+</body>
+</html>
