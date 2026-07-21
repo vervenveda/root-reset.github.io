@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Creative Mind Odyssey — Sovereign Edition</title>
+<style>
+  :root{
+    --bgA:#0a0a0a;
+    --bgB:#1b003a;
+    --bgC:#111;
+    --ink:#fff;
+    --muted:rgba(255,255,255,.72);
+    --card:rgba(20,18,42,.78);
+    --card2:rgba(12,12,22,.72);
+    --stroke:rgba(255,218,89,.26);
+    --accent:#ffda59;
+    --accent2:#8be9fd;
+    --danger:#ff5c7a;
+    --ok:#7CFFB2;
+
+    --radius:18px;
+    --shadow: 0 18px 40px rgba(0,0,0,.35);
+    --shadowSoft: 0 10px 26px rgba(0,0,0,.22);
+
+    --h1: clamp(22px, 3.2vw, 36px);
+    --h2: clamp(16px, 2.2vw, 20px);
+    --p:  clamp(16px, 1.9vw, 18px);
+    --small: clamp(13px, 1.6vw, 14px);
+
+    --pad: clamp(14px, 2.2vw, 18px);
+    --gap: clamp(10px, 2vw, 14px);
+
+    /* If you want to let Wix’s grey container show through, set this to transparent */
+    --pageBg: linear-gradient(120deg, var(--bgA), var(--bgB), var(--bgC));
+    --shellBg: rgba(16,16,26,.52); /* the “pop” box background */
+  }
+
+  /* animated background */
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--pageBg);
+    background-size: 300% 300%;
+    animation: gradientShift 16s ease infinite;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 18px;
+  }
+  @keyframes gradientShift{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  .shell{
+    width:min(860px, 100%);
+    background: var(--shellBg);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    padding: clamp(14px, 2.8vw, 22px);
+  }
+
+  header{
+    display:flex;
+    gap: var(--gap);
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    margin-bottom: var(--gap);
+  }
+
+  .brand h1{
+    margin:0;
+    font-size: var(--h1);
+    letter-spacing:.3px;
+    color: var(--accent);
+    text-shadow: 0 0 14px rgba(255,218,89,.35);
+  }
+  .brand .sub{
+    margin-top:6px;
+    font-size: var(--small);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: 1.35;
+  }
+
+  .statusRow{
+    display:flex;
+    gap: 10px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .pill{
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: var(--small);
+    color: rgba(255,255,255,.86);
+    display:flex;
+    gap: 8px;
+    align-items:center;
+    box-shadow: var(--shadowSoft);
+  }
+  .pill b{ color: var(--accent); font-weight: 800; }
+
+  .iconBtn{
+    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.9);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 750;
+    cursor:pointer;
+    transition: transform .12s ease, background .2s ease, border-color .2s ease;
+  }
+  .iconBtn:hover{ transform: translateY(-1px); border-color: rgba(255,218,89,.34); }
+  .iconBtn:active{ transform: translateY(0px); }
+
+  .controls{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: var(--gap);
+    align-items:end;
+    margin: 10px 0 var(--gap) 0;
+  }
+  @media (max-width: 780px){
+    .controls{ grid-template-columns: 1fr 1fr; }
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+  .field label{
+    font-size: var(--small);
+    color: rgba(255,255,255,.86);
+    display:flex;
+    gap:8px;
+    align-items:center;
+    white-space:nowrap;
+  }
+  select{
+    width:100%;
+    padding: 12px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.92);
+    font-weight: 650;
+    outline:none;
+  }
+
+  .primary{
+    background: var(--accent);
+    color:#140f0a;
+    border:none;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-weight: 850;
+    cursor:pointer;
+    box-shadow: 0 10px 22px rgba(255,218,89,.18);
+    transition: transform .12s ease, filter .2s ease;
+    white-space:nowrap;
+  }
+  .primary:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+  .primary:active{ transform: translateY(0px); }
+
+  .ghost{
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.92);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-weight: 800;
+    cursor:pointer;
+    transition: transform .12s ease, border-color .2s ease;
+  }
+  .ghost:hover{ transform: translateY(-1px); border-color: rgba(255,218,89,.35); }
+
+  main{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+  }
+  @media (max-width: 780px){
+    main{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: var(--radius);
+    box-shadow: var(--shadowSoft);
+    padding: var(--pad);
+    position:relative;
+    overflow:hidden;
+  }
+  .panel::before{
+    content:"";
+    position:absolute;
+    inset: -2px;
+    pointer-events:none;
+    border-radius: inherit;
+    background:
+      radial-gradient(600px 120px at 10% 0%, rgba(255,218,89,.16), transparent 60%),
+      radial-gradient(500px 160px at 90% 20%, rgba(139,233,253,.12), transparent 60%);
+    opacity:.9;
+  }
+  .panel > *{ position:relative; }
+
+  .panelHead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .panelHead h2{
+    margin:0;
+    font-size: var(--h2);
+    color: rgba(255,255,255,.92);
+    letter-spacing:.2px;
+  }
+  .miniRow{
+    display:flex;
+    gap: 8px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .promptBox{
+    background: rgba(0,0,0,.20);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 14px 14px;
+    font-size: var(--p);
+    line-height:1.45;
+    min-height: 78px;
+  }
+
+  textarea{
+    width:100%;
+    min-height: 160px;
+    resize: vertical;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    padding: 12px 12px;
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.92);
+    font-size: var(--p);
+    line-height: 1.55;
+    outline:none;
+  }
+  textarea::placeholder{ color: rgba(255,255,255,.46); }
+
+  .btnRow{
+    display:flex;
+    gap: 10px;
+    flex-wrap:wrap;
+    margin-top: 10px;
+    justify-content:flex-start;
+  }
+
+  .wide{
+    grid-column: 1 / -1;
+  }
+
+  .responseBox{
+    background: rgba(0,0,0,.18);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 14px 14px;
+    min-height: 86px;
+    font-size: var(--p);
+    line-height: 1.45;
+  }
+  .reflection{
+    margin-top:10px;
+    color: rgba(255,255,255,.74);
+    font-style: italic;
+    font-size: var(--small);
+  }
+
+  .foot{
+    display:flex;
+    gap: 10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    margin-top: var(--gap);
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.10);
+  }
+  .credit{
+    font-size: var(--small);
+    color: rgba(255,255,255,.62);
+  }
+  .credit a{ color: var(--accent); text-decoration:none; font-weight:800; }
+
+  /* MODALS */
+  .overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,.62);
+    padding: 16px;
+    z-index:9999;
+  }
+  .modal{
+    width:min(920px, 100%);
+    margin: 5vh auto;
+    background: rgba(18,18,28,.92);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    padding: 16px;
+  }
+  .modalHead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom: 10px;
+  }
+  .modalHead h3{
+    margin:0;
+    color: rgba(255,255,255,.94);
+    letter-spacing:.2px;
+  }
+  .modalBody{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 780px){
+    .modalBody{ grid-template-columns: 1fr; }
+  }
+  .modalCard{
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .modalCard h4{
+    margin:0 0 8px 0;
+    font-size: 14px;
+    color: rgba(255,255,255,.88);
+  }
+  .modalCard textarea{
+    min-height: 220px;
+    background: rgba(0,0,0,.25);
+  }
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    max-height: 60vh;
+    overflow:auto;
+    padding-right: 6px;
+  }
+  .item{
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .itemTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom: 6px;
+    color: rgba(255,255,255,.8);
+    font-size: 13px;
+  }
+  .itemPrompt{ color: rgba(255,255,255,.92); font-weight: 850; margin-bottom: 6px; }
+  .itemResp{ color: rgba(255,255,255,.84); white-space: pre-wrap; }
+  .danger{ border-color: rgba(255,92,122,.35) !important; color: rgba(255,255,255,.9); }
+  .ok{ border-color: rgba(124,255,178,.25) !important; }
+  .search{
+    flex:1;
+    min-width: 220px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.9);
+    outline:none;
+  }
+
+  /* THEMES */
+  body.theme-playful{
+    --pageBg: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    --shellBg: rgba(255,255,255,.18);
+    --card: rgba(20,10,18,.55);
+  }
+  body.theme-reflective{
+    --pageBg: linear-gradient(135deg, #151c2b, #2a3150, #1a1d2f);
+    --shellBg: rgba(10,12,18,.45);
+  }
+  body.theme-mystic{
+    --pageBg: linear-gradient(135deg, #1b003a, #5b0060, #3a0ca3);
+    --shellBg: rgba(12,10,22,.48);
+  }
+</style>
+</head>
+
+<body class="theme-reflective">
+
+<div class="shell" role="application" aria-label="Creative Mind Odyssey">
+  <header>
+    <div class="brand">
+      <h1>Creative Mind Odyssey</h1>
+      <div class="sub">A calm, sovereign creative prompt station — prompts, journaling, and inspiration stored locally on your device.</div>
+    </div>
+
+    <div class="statusRow">
+      <div class="pill">🔥 Streak: <b id="streakPill">0</b></div>
+      <div class="pill">✨ Score: <b id="scorePill">0</b></div>
+      <button class="iconBtn" id="openGalleryBtn">📚 Gallery</button>
+      <button class="iconBtn" id="openLibraryBtn">🧠 Library</button>
+    </div>
+  </header>
+
+  <section class="controls">
+    <div class="field">
+      <label for="moodSelect">🎨 Mood</label>
+      <select id="moodSelect">
+        <option value="reflective">Reflective</option>
+        <option value="playful">Playful</option>
+        <option value="mystic">Mystic</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="filterSelect">🗂️ Filter</label>
+      <select id="filterSelect">
+        <option value="all">All Prompts</option>
+        <option value="favorites">Favorites Only</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="speedSelect">⌛ Type Speed</label>
+      <select id="speedSelect">
+        <option value="0">Instant</option>
+        <option value="18">Fast</option>
+        <option value="32" selected>Normal</option>
+        <option value="46">Slow</option>
+      </select>
+    </div>
+
+    <button class="primary" id="nextPromptBtn">Next Prompt</button>
+  </section>
+
+  <main>
+    <!-- Prompt -->
+    <section class="panel">
+      <div class="panelHead">
+        <h2>Prompt</h2>
+        <div class="miniRow">
+          <button class="ghost" id="favBtn">☆ Favorite</button>
+          <button class="ghost" id="copyPromptBtn">Copy</button>
+        </div>
+      </div>
+      <div class="promptBox" id="promptBox">Press “Next Prompt” to begin your Odyssey…</div>
+      <div class="reflection" id="promptMeta"></div>
+    </section>
+
+    <!-- Response -->
+    <section class="panel">
+      <div class="panelHead">
+        <h2>Your Response</h2>
+        <div class="miniRow">
+          <button class="ghost" id="clearBtn">Clear</button>
+        </div>
+      </div>
+      <textarea id="userInput" placeholder="Type your creative response here…"></textarea>
+      <div class="btnRow">
+        <button class="primary" id="submitBtn">Submit Response</button>
+        <button class="ghost" id="copyResponseBtn">Copy</button>
+      </div>
+      <div class="reflection" id="statsLine"></div>
+    </section>
+
+    <!-- Inspiration -->
+    <section class="panel wide">
+      <div class="panelHead">
+        <h2>Inspiration</h2>
+        <div class="miniRow">
+          <button class="ghost" id="shareBtn">Share</button>
+          <button class="ghost" id="exportBtn">Export Gallery</button>
+        </div>
+      </div>
+      <div class="responseBox" id="responseBox">Your inspiration will appear here after you submit.</div>
+      <div class="reflection" id="reflectionBox"></div>
+    </section>
+  </main>
+
+  <div class="foot">
+    <div class="credit">✨ Powered by <a href="https://myartgallery.online" target="_blank" rel="noopener">MyArtGallery.Online</a> ✨</div>
+    <div class="credit">Local-first • No logins • No tracking • Your device, your work.</div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<div class="overlay" id="galleryOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Gallery">
+    <div class="modalHead">
+      <h3>📚 Gallery (Saved Locally)</h3>
+      <input class="search" id="gallerySearch" placeholder="Search prompt or response…" />
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="ghost danger" id="clearGalleryBtn">Clear All</button>
+        <button class="ghost" id="closeGalleryBtn">Close</button>
+      </div>
+    </div>
+    <div class="modalCard">
+      <div class="list" id="galleryList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY MODAL -->
+<div class="overlay" id="libraryOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Library">
+    <div class="modalHead">
+      <h3>🧠 Prompt Library (Local)</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="ghost ok" id="saveLibraryBtn">Save Library</button>
+        <button class="ghost danger" id="resetLibraryBtn">Reset to Defaults</button>
+        <button class="ghost" id="closeLibraryBtn">Close</button>
+      </div>
+    </div>
+
+    <div class="modalBody">
+      <div class="modalCard">
+        <h4>Prompts (one per line)</h4>
+        <textarea id="promptsArea" spellcheck="false" placeholder="Paste your full prompt list here… (one prompt per line)"></textarea>
+        <div class="reflection" id="promptCountLine"></div>
+      </div>
+
+      <div class="modalCard">
+        <h4>Inspiration Lines (one per line)</h4>
+        <textarea id="responsesArea" spellcheck="false" placeholder="Paste your inspiration responses here… (one per line)"></textarea>
+        <div class="reflection" id="responseCountLine"></div>
+      </div>
+    </div>
+
+    <div class="modalCard" style="margin-top:12px;">
+      <div class="reflection">
+        Tip: This avoids huge code blocks getting cut off. Paste once → Save Library → it persists locally on that device.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   Sovereign Storage Keys
+========================= */
+const LS = {
+  score: "odyssey_score_v2",
+  streak: "odyssey_streak_v2",
+  lastDay: "odyssey_lastDay_v2",
+  gallery: "odyssey_gallery_v2",
+  favorites: "odyssey_favorites_v2",
+  prompts: "odyssey_prompts_v2",
+  responses: "odyssey_responses_v2",
+  bag: "odyssey_promptbag_v2",
+  mood: "odyssey_mood_v2",
+  speed: "odyssey_typespeed_v2",
+  filter: "odyssey_filter_v2",
+};
+
+/* =========================
+   Defaults (short on purpose)
+   You can paste your full lists into Library.
+========================= */
+const DEFAULT_PROMPTS = [
+  "Draw your favorite sound.",
+  "Describe a feeling without naming it.",
+  "Imagine a tree that grows memories instead of leaves.",
+  "Write a message you would send to the sea.",
+  "Draw the quiet after creation.",
+
+  "Illustrate the moment before something beautiful happens.",
+  "Write about a small kindness you witnessed recently.",
+  "Draw what peace looks like as a landscape.",
+  "Describe warmth using only textures and motion.",
+  "Imagine a conversation between two colors.",
+  "Sketch how courage feels when it first appears.",
+  "Write a memory from the point of view of the wind.",
+  "Create a symbol representing hope or joy.",
+  "Draw your thoughts as constellations.",
+  "Describe a color that doesn’t exist yet.",
+  "Imagine a door that opens only in your imagination.",
+  "Write the story behind a shadow you once noticed.",
+  "Draw the rhythm of breathing.",
+  "Describe the space between two thoughts.",
+  "Imagine your curiosity as weather.",
+  "Sketch the echo of your favorite word.",
+  "Draw what an apology might look like as light.",
+  "Write about the first light after a long night.",
+  "Imagine a place made entirely of kindness.",
+  "Describe the taste of freedom without using food words.",
+  "Draw your inner light as a storm of stars.",
+  "Sketch how calm feels beneath chaos.",
+  "Write about the calm between two storms.",
+  "Draw the pattern of inspiration as it spreads.",
+  "Imagine a painting that can breathe.",
+  "Describe a moment that glowed even in darkness.",
+  "Draw how time feels when it slows down.",
+  "Write a letter to your future self in three sentences.",
+  "Imagine the moon writing you a note — what does it say?",
+  "Sketch what belonging feels like in color.",
+  "Draw a map that leads only to feelings.",
+  "Write about the beauty of an unfinished thought.",
+  "Imagine a sound that could heal sadness.",
+  "Draw your favorite silence.",
+  "Describe the feeling of being understood without using “happy” or “sad”.",
+  "Sketch the border between fear and discovery.",
+  "Write about a promise you kept (even a tiny one).",
+  "Draw a horizon inside you.",
+  "Imagine your ideas as light traveling through glass.",
+  "Describe how gratitude would move if it were water.",
+  "Sketch how inspiration enters the room.",
+  "Draw your imagination resting.",
+  "Write the moment your courage returned.",
+  "Imagine a garden made of sound.",
+  "Describe home as a texture.",
+  "Draw a beginning."
+];
+
+const DEFAULT_RESPONSES = [
+  "✨ Your creativity flows like light through stained glass.",
+  "🌙 The quietest moments hold the loudest truths.",
+  "🌿 What you create also recreates you.",
+  "💫 Every thought is a star beginning to burn.",
+  "🕯️ The gentlest glow can change the whole room.",
+
+  "🌌 Your ideas are constellations waiting to be mapped.",
+  "🌻 Small joys build entire worlds inside you.",
+  "🌊 Let your imagination ripple beyond reason.",
+  "🔥 One brave sentence can open a whole horizon.",
+  "🍃 Even rest is part of the masterpiece.",
+  "🌈 Your feelings know colors words can’t hold.",
+  "🪶 You’re allowed to begin again—softly and often.",
+  "🌾 The seed of wonder is already enough.",
+  "💛 Your tenderness is a kind of strength.",
+  "🌙 Trust the pause—creation lives there too.",
+  "✨ What you make today changes what you believe tomorrow.",
+  "🌿 Your inner world deserves a beautiful language.",
+  "🌌 You’re building something real out of invisible light.",
+  "🌊 Doubt is just water—let it pass through.",
+  "🔥 Your courage doesn’t have to be loud to be true.",
+  "🌻 The smallest detail can carry the biggest meaning.",
+  "🕯️ You’re not behind—you’re becoming.",
+  "💫 The universe leans in when you create honestly.",
+  "🌈 Your imagination is a compass, not a test.",
+  "🍃 Keep it simple. Keep it sacred. Keep it yours.",
+  "🌙 Your quiet work is still powerful work.",
+  "✨ You’re learning your own rhythm—and it’s beautiful.",
+  "🌿 Every honest attempt is progress.",
+  "🌊 Your mind is a tide that returns with new treasure.",
+  "🔥 Make something gentle. Let it be enough.",
+  "🌌 You carry starlight in your sentences.",
+  "🌻 Your creativity is proof that hope is alive.",
+  "🕯️ One spark is enough to begin the fire.",
+  "💫 You’re allowed to make imperfect magic.",
+  "🌈 Your heart knows how to paint without permission."
+];
+
+const REFLECTIONS = [
+  "✨ Reflect: What emotion emerged while creating?",
+  "✨ Reflect: What detail surprised you the most?",
+  "✨ Reflect: What would you change if you had 5 more minutes?",
+  "✨ Reflect: What is the smallest next step you can take?",
+  "✨ Reflect: What does this prompt reveal about you today?",
+
+  "✨ Reflect: Where did you feel this in your body?",
+  "✨ Reflect: What word wants to be written next?",
+  "✨ Reflect: What part felt easy—and why?",
+  "✨ Reflect: What part felt resistant—and what might it be protecting?",
+  "✨ Reflect: If this had a color, what would it be?",
+  "✨ Reflect: What would you title this moment?",
+  "✨ Reflect: What did you learn about yourself just now?",
+  "✨ Reflect: What are you grateful for in this response?",
+  "✨ Reflect: What would “soft courage” look like here?",
+  "✨ Reflect: What is one tiny improvement you’d enjoy making?",
+  "✨ Reflect: What would you keep exactly as it is?",
+  "✨ Reflect: If a friend wrote this, what would you praise?",
+  "✨ Reflect: What theme keeps returning in your creations lately?",
+  "✨ Reflect: What’s one gentle action you can take after this?",
+  "✨ Reflect: What does your inner voice need to hear right now?"
+];
+/* =========================
+   Elements
+========================= */
+const promptBox = document.getElementById("promptBox");
+const promptMeta = document.getElementById("promptMeta");
+const userInput = document.getElementById("userInput");
+const responseBox = document.getElementById("responseBox");
+const reflectionBox = document.getElementById("reflectionBox");
+const statsLine = document.getElementById("statsLine");
+
+const moodSelect = document.getElementById("moodSelect");
+const speedSelect = document.getElementById("speedSelect");
+const filterSelect = document.getElementById("filterSelect");
+
+const nextPromptBtn = document.getElementById("nextPromptBtn");
+const submitBtn = document.getElementById("submitBtn");
+const clearBtn = document.getElementById("clearBtn");
+
+const favBtn = document.getElementById("favBtn");
+const copyPromptBtn = document.getElementById("copyPromptBtn");
+const copyResponseBtn = document.getElementById("copyResponseBtn");
+const shareBtn = document.getElementById("shareBtn");
+const exportBtn = document.getElementById("exportBtn");
+
+const scorePill = document.getElementById("scorePill");
+const streakPill = document.getElementById("streakPill");
+
+/* Gallery modal */
+const galleryOverlay = document.getElementById("galleryOverlay");
+const openGalleryBtn = document.getElementById("openGalleryBtn");
+const closeGalleryBtn = document.getElementById("closeGalleryBtn");
+const clearGalleryBtn = document.getElementById("clearGalleryBtn");
+const galleryList = document.getElementById("galleryList");
+const gallerySearch = document.getElementById("gallerySearch");
+
+/* Library modal */
+const libraryOverlay = document.getElementById("libraryOverlay");
+const openLibraryBtn = document.getElementById("openLibraryBtn");
+const closeLibraryBtn = document.getElementById("closeLibraryBtn");
+const saveLibraryBtn = document.getElementById("saveLibraryBtn");
+const resetLibraryBtn = document.getElementById("resetLibraryBtn");
+const promptsArea = document.getElementById("promptsArea");
+const responsesArea = document.getElementById("responsesArea");
+const promptCountLine = document.getElementById("promptCountLine");
+const responseCountLine = document.getElementById("responseCountLine");
+
+/* =========================
+   Helpers
+========================= */
+function todayKey(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function readJSON(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return fallback;
+    return JSON.parse(raw);
+  }catch{
+    return fallback;
+  }
+}
+function writeJSON(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getLines(text){
+  return String(text||"")
+    .split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function getPrompts(){
+  const custom = readJSON(LS.prompts, null);
+  const base = (custom && Array.isArray(custom) && custom.length) ? custom : DEFAULT_PROMPTS;
+  const favs = readJSON(LS.favorites, []);
+  const filter = filterSelect.value;
+  if(filter === "favorites"){
+    const favSet = new Set(favs);
+    return base.filter(p => favSet.has(p));
+  }
+  return base;
+}
+
+function getResponses(){
+  const custom = readJSON(LS.responses, null);
+  return (custom && Array.isArray(custom) && custom.length) ? custom : DEFAULT_RESPONSES;
+}
+
+function setTheme(mood){
+  document.body.classList.remove("theme-reflective","theme-playful","theme-mystic");
+  document.body.classList.add("theme-"+mood);
+}
+
+function typeInto(el, text, speed){
+  const s = Number(speed)||0;
+  if(s <= 0){
+    el.textContent = text;
+    return Promise.resolve();
+  }
+  el.textContent = "";
+  return new Promise(resolve=>{
+    let i = 0;
+    const t = setInterval(()=>{
+      el.textContent += text[i] || "";
+      i++;
+      if(i >= text.length){
+        clearInterval(t);
+        resolve();
+      }
+    }, s);
+  });
+}
+
+function wordCount(str){
+  const t = (str||"").trim();
+  return t ? t.split(/\s+/).length : 0;
+}
+
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function safeCopy(text){
+  const t = String(text||"");
+  if(!t) return;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).catch(()=>{});
+  }else{
+    const ta = document.createElement("textarea");
+    ta.value = t;
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand("copy"); }catch{}
+    ta.remove();
+  }
+}
+
+/* =========================
+   Prompt Bag (no-repeat cycle)
+========================= */
+function initBagIfNeeded(prompts){
+  let bag = readJSON(LS.bag, null);
+  if(!bag || !Array.isArray(bag.pool) || bag.pool.length === 0 || bag.sourceCount !== prompts.length){
+    const pool = prompts.map((_, i)=>i);
+    // Fisher-Yates shuffle
+    for(let i=pool.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    bag = { pool, sourceCount: prompts.length };
+    writeJSON(LS.bag, bag);
+  }
+  return bag;
+}
+
+function pullNextPrompt(prompts){
+  if(!prompts.length) return null;
+  const bag = initBagIfNeeded(prompts);
+  const idx = bag.pool.pop();
+  writeJSON(LS.bag, bag);
+  return prompts[idx];
+}
+
+/* =========================
+   State
+========================= */
+let currentPrompt = "";
+let score = Number(localStorage.getItem(LS.score) || 0) || 0;
+let streak = Number(localStorage.getItem(LS.streak) || 0) || 0;
+
+function refreshPills(){
+  scorePill.textContent = String(score);
+  streakPill.textContent = String(streak);
+}
+
+function updateStatsLine(){
+  const w = wordCount(userInput.value);
+  statsLine.textContent = w ? `${w} words • stored locally when you submit` : `Tip: write a single sentence or a full paragraph.`;
+}
+
+/* =========================
+   Favorites
+========================= */
+function isFav(prompt){
+  const favs = readJSON(LS.favorites, []);
+  return favs.includes(prompt);
+}
+function toggleFav(prompt){
+  if(!prompt) return;
+  let favs = readJSON(LS.favorites, []);
+  const exists = favs.includes(prompt);
+  favs = exists ? favs.filter(x=>x!==prompt) : favs.concat([prompt]);
+  writeJSON(LS.favorites, favs);
+  paintFavBtn();
+}
+function paintFavBtn(){
+  if(!currentPrompt){
+    favBtn.textContent = "☆ Favorite";
+    return;
+  }
+  favBtn.textContent = isFav(currentPrompt) ? "★ Favorited" : "☆ Favorite";
+}
+
+/* =========================
+   Core actions
+========================= */
+async function nextPrompt(){
+  const prompts = getPrompts();
+  if(!prompts.length){
+    await typeInto(promptBox, "No prompts available. Open Library and add prompts, or switch Filter to All.", speedSelect.value);
+    promptMeta.textContent = "";
+    currentPrompt = "";
+    paintFavBtn();
+    return;
+  }
+
+  currentPrompt = pullNextPrompt(prompts) || prompts[Math.floor(Math.random()*prompts.length)];
+  paintFavBtn();
+
+  promptMeta.textContent = `Prompts loaded: ${prompts.length} • Click ☆ to favorite this one.`;
+  userInput.value = "";
+  updateStatsLine();
+
+  await typeInto(promptBox, currentPrompt, speedSelect.value);
+  responseBox.textContent = "Your inspiration will appear here after you submit.";
+  reflectionBox.textContent = "";
+}
+
+function bumpScoreAndStreak(){
+  // score always increments on submit
+  score += 1;
+  localStorage.setItem(LS.score, String(score));
+
+  // streak only increments once per day
+  const last = localStorage.getItem(LS.lastDay) || "";
+  const today = todayKey();
+  if(last !== today){
+    // if last day was yesterday, keep streak; else reset to 1
+    // simple streak logic (day-to-day)
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate()-1);
+    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,"0")}-${String(yesterday.getDate()).padStart(2,"0")}`;
+
+    if(last === yKey) streak = streak + 1;
+    else streak = 1;
+
+    localStorage.setItem(LS.streak, String(streak));
+    localStorage.setItem(LS.lastDay, today);
+  }
+  refreshPills();
+}
+
+function submitResponse(){
+  const text = userInput.value.trim();
+  if(!text){
+    responseBox.textContent = "Type a response first — even one sentence counts.";
+    reflectionBox.textContent = "";
+    return;
+  }
+  if(!currentPrompt){
+    responseBox.textContent = "Click “Next Prompt” first.";
+    reflectionBox.textContent = "";
+    return;
+  }
+
+  bumpScoreAndStreak();
+
+  const responses = getResponses();
+  const inspired = responses.length ? responses[Math.floor(Math.random()*responses.length)] : "✨ Beautiful. Keep going.";
+  responseBox.innerHTML = `<div style="font-weight:900;color:rgba(255,255,255,.92)">${inspired}</div>`;
+  reflectionBox.textContent = REFLECTIONS[Math.floor(Math.random()*REFLECTIONS.length)];
+
+  // Save to gallery
+  const gallery = readJSON(LS.gallery, []);
+  gallery.unshift({
+    t: Date.now(),
+    mood: moodSelect.value,
+    prompt: currentPrompt,
+    response: text,
+    scoreAfter: score
+  });
+  writeJSON(LS.gallery, gallery);
+
+  updateStatsLine();
+}
+
+/* =========================
+   Gallery
+========================= */
+function openOverlay(overlay){
+  overlay.style.display = "block";
+  overlay.setAttribute("aria-hidden","false");
+}
+function closeOverlay(overlay){
+  overlay.style.display = "none";
+  overlay.setAttribute("aria-hidden","true");
+}
+
+function renderGallery(){
+  const q = (gallerySearch.value || "").trim().toLowerCase();
+  let items = readJSON(LS.gallery, []);
+  if(q){
+    items = items.filter(it =>
+      String(it.prompt||"").toLowerCase().includes(q) ||
+      String(it.response||"").toLowerCase().includes(q)
+    );
+  }
+  if(!items.length){
+    galleryList.innerHTML = `<div class="item"><div class="itemPrompt">No saved entries yet.</div><div class="itemResp">Submit a response to save it here.</div></div>`;
+    return;
+  }
+
+  galleryList.innerHTML = items.map((it, idx)=>{
+    const d = new Date(it.t || Date.now());
+    const stamp = d.toLocaleString();
+    const mood = it.mood || "reflective";
+    return `
+      <div class="item">
+        <div class="itemTop">
+          <span>🗓️ ${stamp} • 🎨 ${mood}</span>
+          <button class="ghost danger" data-del="${idx}" title="Delete entry">Delete</button>
+        </div>
+        <div class="itemPrompt">${escapeHtml(it.prompt||"")}</div>
+        <div class="itemResp">${escapeHtml(it.response||"")}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+galleryList.addEventListener("click", (e)=>{
+  const btn = e.target.closest("[data-del]");
+  if(!btn) return;
+  const idx = Number(btn.getAttribute("data-del"));
+  let items = readJSON(LS.gallery, []);
+  if(Number.isFinite(idx) && idx >= 0 && idx < items.length){
+    items.splice(idx, 1);
+    writeJSON(LS.gallery, items);
+    renderGallery();
+  }
+});
+
+/* =========================
+   Library
+========================= */
+function syncLibraryUI(){
+  const p = readJSON(LS.prompts, null);
+  const r = readJSON(LS.responses, null);
+  const prompts = (p && Array.isArray(p)) ? p : DEFAULT_PROMPTS;
+  const responses = (r && Array.isArray(r)) ? r : DEFAULT_RESPONSES;
+
+  promptsArea.value = prompts.join("\n");
+  responsesArea.value = responses.join("\n");
+
+  promptCountLine.textContent = `${prompts.length} prompts loaded (saved locally).`;
+  responseCountLine.textContent = `${responses.length} inspiration lines loaded (saved locally).`;
+}
+
+function saveLibrary(){
+  const p = getLines(promptsArea.value);
+  const r = getLines(responsesArea.value);
+
+  writeJSON(LS.prompts, p.length ? p : DEFAULT_PROMPTS);
+  writeJSON(LS.responses, r.length ? r : DEFAULT_RESPONSES);
+
+  // reset bag so no-repeat recalculates
+  localStorage.removeItem(LS.bag);
+
+  syncLibraryUI();
+  // if user was filtering favorites and has none, avoid “no prompts”
+  if(filterSelect.value === "favorites"){
+    // keep filter, but user can switch
+  }
+}
+
+function resetLibrary(){
+  writeJSON(LS.prompts, DEFAULT_PROMPTS);
+  writeJSON(LS.responses, DEFAULT_RESPONSES);
+  localStorage.removeItem(LS.bag);
+  syncLibraryUI();
+}
+
+/* =========================
+   Share + Export
+========================= */
+function share(){
+  const shareURL = "https://myartgallery.online";
+  const shareText = `I’m exploring my imagination in Creative Mind Odyssey! ✨\n\nPrompt: ${currentPrompt || "(open the app to see the prompt)"}\n\n— ${shareURL}`;
+  // Prefer native share if available
+  if(navigator.share){
+    navigator.share({ title:"Creative Mind Odyssey", text: shareText, url: shareURL }).catch(()=>{});
+    return;
+  }
+  // Fallback: copy
+  safeCopy(shareText);
+  responseBox.innerHTML = `<div style="font-weight:900;color:rgba(255,255,255,.92)">Copied share text to clipboard. 📋✨</div>`;
+}
+
+function exportGallery(){
+  const items = readJSON(LS.gallery, []);
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    app: "Creative Mind Odyssey — Sovereign Edition",
+    items
+  };
+  downloadText("creative-mind-odyssey-gallery.json", JSON.stringify(payload, null, 2));
+}
+
+/* =========================
+   Wire events
+========================= */
+nextPromptBtn.addEventListener("click", nextPrompt);
+submitBtn.addEventListener("click", submitResponse);
+clearBtn.addEventListener("click", ()=>{ userInput.value=""; updateStatsLine(); });
+
+favBtn.addEventListener("click", ()=>toggleFav(currentPrompt));
+copyPromptBtn.addEventListener("click", ()=>safeCopy(currentPrompt));
+copyResponseBtn.addEventListener("click", ()=>safeCopy(userInput.value));
+shareBtn.addEventListener("click", share);
+exportBtn.addEventListener("click", exportGallery);
+
+userInput.addEventListener("input", updateStatsLine);
+
+moodSelect.addEventListener("change", ()=>{
+  const mood = moodSelect.value;
+  localStorage.setItem(LS.mood, mood);
+  setTheme(mood);
+});
+
+speedSelect.addEventListener("change", ()=>{
+  localStorage.setItem(LS.speed, speedSelect.value);
+});
+
+filterSelect.addEventListener("change", ()=>{
+  localStorage.setItem(LS.filter, filterSelect.value);
+  // reset bag because the prompt list changed
+  localStorage.removeItem(LS.bag);
+});
+
+/* Gallery modal */
+openGalleryBtn.addEventListener("click", ()=>{
+  renderGallery();
+  openOverlay(galleryOverlay);
+  setTimeout(()=>gallerySearch.focus(), 0);
+});
+closeGalleryBtn.addEventListener("click", ()=>closeOverlay(galleryOverlay));
+clearGalleryBtn.addEventListener("click", ()=>{
+  if(confirm("Clear ALL saved gallery entries on this device?")){
+    writeJSON(LS.gallery, []);
+    renderGallery();
+  }
+});
+gallerySearch.addEventListener("input", renderGallery);
+
+/* Library modal */
+openLibraryBtn.addEventListener("click", ()=>{
+  syncLibraryUI();
+  openOverlay(libraryOverlay);
+});
+closeLibraryBtn.addEventListener("click", ()=>closeOverlay(libraryOverlay));
+saveLibraryBtn.addEventListener("click", saveLibrary);
+resetLibraryBtn.addEventListener("click", ()=>{
+  if(confirm("Reset library to default sample prompts/responses?")){
+    resetLibrary();
+  }
+});
+
+/* Click outside closes */
+[galleryOverlay, libraryOverlay].forEach(ov=>{
+  ov.addEventListener("mousedown", (e)=>{
+    if(e.target === ov) closeOverlay(ov);
+  });
+});
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape"){
+    closeOverlay(galleryOverlay);
+    closeOverlay(libraryOverlay);
+  }
+});
+
+/* =========================
+   Init
+========================= */
+(function init(){
+  // load persisted controls
+  const mood = localStorage.getItem(LS.mood) || "reflective";
+  const speed = localStorage.getItem(LS.speed) || "32";
+  const filter = localStorage.getItem(LS.filter) || "all";
+
+  moodSelect.value = mood;
+  speedSelect.value = speed;
+  filterSelect.value = filter;
+
+  setTheme(mood);
+
+  refreshPills();
+  updateStatsLine();
+  paintFavBtn();
+})();
+</script>
+
+</body>
+</html>
