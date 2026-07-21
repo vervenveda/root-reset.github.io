@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creative Niché Venn</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+    font-size: 2em;
+    color: #333;
+  }
+
+  .venn-container {
+    position: relative;
+    width: 420px;
+    height: 300px;
+    margin-bottom: 20px;
+  }
+
+  .circle {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #222;
+    text-align: center;
+    padding: 10px;
+    box-sizing: border-box;
+    transition: transform 0.3s;
+  }
+
+  .circle:hover { transform: scale(1.05); }
+
+  .passion { background: #ff6666; top: 30px; left: 0; }
+  .skill { background: #66b3ff; top: 30px; right: 0; }
+  .audience { background: #8aff8a; bottom: 0; left: 90px; }
+
+  .intersection {
+    position: absolute;
+    top: 120px;
+    left: 120px;
+    width: 180px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-style: italic;
+    padding: 8px;
+  }
+
+  .inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .inputs div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+  }
+
+  input {
+    width: 120px;
+    padding: 6px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.9em;
+  }
+
+  #result {
+    margin-top: 25px;
+    font-size: 1.1em;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>Creative Niché Venn</h1>
+<div class="venn-container">
+  <div class="circle passion">Passion</div>
+  <div class="circle skill">Skill</div>
+  <div class="circle audience">Audience</div>
+  <div class="intersection" id="intersectionText">Your Niche appears here</div>
+</div>
+
+<div class="inputs">
+  <div>
+    <label for="passionInput">Passion</label>
+    <input id="passionInput" placeholder="e.g. Mental health">
+  </div>
+  <div>
+    <label for="skillInput">Skill</label>
+    <input id="skillInput" placeholder="e.g. Digital illustration">
+  </div>
+  <div>
+    <label for="audienceInput">Audience</label>
+    <input id="audienceInput" placeholder="e.g. Young adults">
+  </div>
+</div>
+
+<div id="result">Start typing to discover your creative niche!</div>
+
+<script>
+  const passionInput = document.getElementById('passionInput');
+  const skillInput = document.getElementById('skillInput');
+  const audienceInput = document.getElementById('audienceInput');
+  const resultDiv = document.getElementById('result');
+  const intersectionText = document.getElementById('intersectionText');
+
+  function updateVenn() {
+    const passion = passionInput.value.trim();
+    const skill = skillInput.value.trim();
+    const audience = audienceInput.value.trim();
+
+    let summary = "";
+
+    if (passion || skill || audience) {
+      summary = `I create ${skill || '...'} focused on ${passion || '...'} to engage ${audience || '...'} .`;
+    }
+
+    // Slightly better phrasing for full sets
+    if (passion && skill && audience) {
+      summary = `I create ${skill.toLowerCase()} that explore ${passion.toLowerCase()} for ${audience.toLowerCase()}.`;
+    }
+
+    intersectionText.textContent = passion && skill && audience ? "✨ Niche Found! ✨" : "Your Niche appears here";
+    resultDiv.textContent = summary || "Start typing to discover your creative niche!";
+  }
+
+  [passionInput, skillInput, audienceInput].forEach(input => {
+    input.addEventListener('input', updateVenn);
+  });
+</script>
+
+</body>
+</html>
