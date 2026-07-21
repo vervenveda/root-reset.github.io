@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DreamScript™ — Night Journal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500&family=Montserrat:wght@300;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  /* Sacred Plera palette */
+  --midnight:#050714;
+  --midnight-soft:#111524;
+  --dawn:#f7f3ea;
+  --dawn-soft:#f0e9dc;
+  --ink:#241a16;
+  --lavender:#8f7adf;
+  --rose:#f6b7c6;
+  --aqua:#7bd5d0;
+  --gold:#d9b878;
+
+  --radius-soft:7px;
+  --radius-pill:7px;
+  --shadow-soft:0 21px 44px rgba(0,0,0,0.45);
+  --shadow-card:0 14px 30px rgba(0,0,0,0.32);
+}
+
+/* Page */
+html,body{
+  margin:0;
+  padding:0;
+  min-height:77vh;
+  font-family:'Cormorant Garamond',serif;
+  background:
+    radial-gradient(circle at 15% 0%, #263047 0%, transparent 55%),
+    radial-gradient(circle at 85% 0%, #472a60 0%, transparent 52%),
+    linear-gradient(180deg,#050714,#141826 63%,#1e2230 100%);
+  color:var(--dawn);
+  -webkit-font-smoothing:antialiased;
+}
+.dream-wrap{
+  max-width:555px;
+  max-height: 222px;
+  margin:14px 33px auto;
+  padding:0 12px 24px 12px;
+  box-sizing:border-box;
+}
+
+/* Halo orb */
+.dream-orb-wrap{
+  display:flex;
+  justify-content:center;
+  margin-bottom:12px;
+}
+.dream-orb{
+  width:88px;
+  height:99px;
+  border-radius:7px;
+  background:
+    radial-gradient(circle at 30% 20%, #ffffff, #f7f3ea 18%, transparent 60%),
+    radial-gradient(circle at 70% 80%, #f6b7ff66, transparent 70%),
+    radial-gradient(circle at 50% 50%, #8f7adf, #4a5cff 70%);
+  box-shadow:
+    0 0 33px rgba(255,255,255,0.85),
+    0 0 72px rgba(179,126,255,0.72);
+}
+
+/* Card */
+.dream-card{
+  background:linear-gradient(180deg,var(--dawn),var(--dawn-soft));
+  border-radius:7px;
+  
+  padding:24px 11px 24px 24px;
+  box-shadow:var(--shadow-card);
+  color:var(--ink);
+  position:center;
+}
+
+/* Title */
+.dream-title{
+  font-family:'Cinzel',serif;
+  font-size:24px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  text-align:center;
+  margin:0 0 3px 0;
+}
+.dream-subtitle{
+  text-align:center;
+  font-size:13px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:#756455;
+  margin-bottom:14px;
+}
+
+/* Divider line */
+.dream-divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,#c0a98a,transparent);
+  margin:7px 0 14px 0;
+}
+
+/* Labels & inputs */
+.dream-label{
+  font-size:14px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:#7b6653;
+  margin-bottom:24px;
+}
+.dream-input,
+.dream-textarea,
+.dream-select{
+  width:99%;
+  box-sizing:border-box;
+  border-radius:var(--radius-soft);
+  border:1px solid rgba(80,64,50,0.33);
+  padding:9px 11px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  background:#fdfaf4;
+  color:var(--ink);
+  outline:none;
+  transition:border .18s, box-shadow .18s, background .18s;
+}
+.dream-input:focus,
+.dream-textarea:focus,
+.dream-select:focus{
+  border-color:#b89252;
+  box-shadow:0 0 0 1px rgba(185,146,82,0.4);
+  background:#fffdf8;
+}
+.dream-textarea{
+  min-height:111px;
+  resize:vertical;
+}
+
+/* Small grid helpers */
+.dream-row{
+  display:flex;
+  gap:11px;
+  margin-bottom:11px;
+  flex-wrap:wrap;
+}
+.dream-row-half{
+  flex:1 1 calc(50% - 6px);
+}
+
+/* Buttons */
+.btn-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:var(--radius-pill);
+  border:1px solid rgba(40,28,26,0.38);
+  padding:6px 16px;
+  font-family:'Montserrat',sans-serif;
+  font-weight:500;
+  font-size:12px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  background:linear-gradient(135deg,#8f7adf,#f6b7c6);
+  color:#050714;
+  cursor:pointer;
+  transition:transform .18s, box-shadow .18s, background .18s, border-color .18s;
+}
+.btn-pill.subtle{
+  background:linear-gradient(135deg,#faf6ee,#e5dbcf);
+}
+.btn-pill.outline{
+  background:transparent;
+  border-color:rgba(40,28,26,0.45);
+}
+.btn-pill:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,0.18);
+}
+.btn-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:7px;
+}
+
+/* Symbol chips */
+.symbol-chip{
+  border-radius:var(--radius-pill);
+  border:1px solid rgba(80,64,50,0.38);
+  padding:4px 11px;
+  font-family:'Montserrat',sans-serif;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:#f6efe3;
+  color:#3c2e24;
+  cursor:pointer;
+  margin:2px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.symbol-chip span.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#8f7adf,#7bd5d0);
+}
+.symbol-chip.selected{
+  background:linear-gradient(135deg,#8f7adf,#7bd5d0);
+  color:#050714;
+  border-color:#4b3a86;
+}
+
+/* Insights box */
+.insights-box{
+  margin-top:11px;
+  padding:11px 11px 7px 11px;
+  border-radius:var(--radius-soft);
+  background:#f4eee2;
+  border:1px solid rgba(80,64,50,0.28);
+  max-height:188px;
+  overflow:auto;
+  font-size:14px;
+}
+.insight-item{
+  margin-bottom:9px;
+  padding-bottom:7px;
+  border-bottom:1px dashed rgba(120,100,80,0.33);
+}
+.insight-item:last-child{
+  border-bottom:none;
+}
+.insight-title{
+  font-family:'Cinzel',serif;
+  font-size:14px;
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+  color:#5b4533;
+}
+.insight-meaning{
+  font-size:14px;
+  color:#3d2d24;
+}
+.insight-prompt{
+  font-size:13px;
+  color:#6c5846;
+  margin-top:3px;
+}
+
+/* Saved dreams */
+.saved-section{
+  margin-top:18px;
+  padding-top:11px;
+  border-top:1px solid rgba(80,64,50,0.26);
+}
+.saved-title{
+  font-size:13px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:#7a6553;
+  margin-bottom:7px;
+}
+.saved-list{
+  max-height:222px;
+  overflow:auto;
+  border-radius:var(--radius-soft);
+  border:1px dashed rgba(80,64,50,0.33);
+  background:#fbf6ed;
+  padding:7px 9px;
+}
+.saved-item{
+  padding:5px 3px;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.saved-item span.date{
+  font-size:12px;
+  color:#8e7b6c;
+}
+.saved-item:hover{
+  background:#efe3d4;
+}
+
+/* Footer note */
+.dream-note{
+  margin-top:22px;
+  font-size:11px;
+  line-height:1.4;
+  color:#a08872;
+  text-align:center;
+}
+
+/* Outer halo footer */
+.dream-footer-halo{
+  margin-top:33px;
+  text-align:center;
+  font-family:'Montserrat',sans-serif;
+  font-size:11px;
+  letter-spacing:0.24em;
+  text-transform:uppercase;
+  color:#b7a7d9;
+  opacity:0.9;
+}
+
+/* Small screens */
+@media (max-width:333px){
+  .dream-card{
+    padding:18px 24px 24px 24px;
+  }
+  .dream-title{
+    font-size:24px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="dream-wrap">
+  <div class="dream-orb-wrap">
+    <div class="dream-orb"></div>
+  </div>
+
+  <div class="dream-card">
+    <h1 class="dream-title">DreamScript™</h1>
+    <div class="dream-subtitle">Night Journal · Gentle Dream Decoder</div>
+    <div class="dream-divider"></div>
+
+    <!-- Date + Title -->
+    <div class="dream-row">
+      <div class="dream-row-half">
+        <div class="dream-label">Night Of</div>
+        <input id="dreamDate" type="date" class="dream-input">
+      </div>
+      <div class="dream-row-half">
+        <div class="dream-label">Dream Title</div>
+        <input id="dreamTitle" type="text" class="dream-input" placeholder="(optional) A name for this dream">
+      </div>
+    </div>
+
+    <!-- Dream text -->
+    <div class="dream-label">Dream Notes</div>
+    <textarea id="dreamText" class="dream-textarea" placeholder="Write your dream in gentle detail. You can include feelings, colors, people, and places."></textarea>
+
+    <!-- Actions -->
+    <div class="btn-group" style="margin-top:11px;">
+      <button id="scanBtn" class="btn-pill subtle">Scan For Symbols</button>
+      <button id="clearBtn" class="btn-pill outline">Clear</button>
+      <button id="saveBtn" class="btn-pill">Save Dream</button>
+    </div>
+
+    <!-- Symbols -->
+    <div style="margin-top:14px;">
+      <div class="dream-label">Common Symbols Noticed</div>
+      <div id="symbolChips"></div>
+    </div>
+
+    <!-- Insights -->
+    <div style="margin-top:11px;">
+      <div class="dream-label">Symbols &amp; Gentle Reflections</div>
+      <div id="insightsBox" class="insights-box">
+        <div style="font-size:13px;color:#7d6753;">
+          Select a symbol or tap “Scan” to see soft reflection prompts.
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved dreams -->
+    <div class="saved-section">
+      <div class="saved-title">Past Entries (this device only)</div>
+      <div id="savedList" class="saved-list"></div>
+      <div class="dream-note">
+        This journal lives in your browser’s local storage. It is private to this device and not shared with any server.
+        This is for reflection, not prediction or medical advice.
+      </div>
+    </div>
+  </div>
+
+  <div class="dream-footer-halo">
+    FIRST HOUR · PLERA · SOFT AWAKENING
+  </div>
+</div>
+
+<script>
+// ===== DreamScript™ — Data =====
+
+const SYMBOLS = [
+  {
+    id:'falling',
+    label:'Falling',
+    keywords:['fall','fell','falling','dropping','plunge','dropped'],
+    meaning:'Often linked with feeling out of control, unstable, or afraid of “losing your footing” in some area of life.',
+    prompt:'Where do you currently feel like the ground is shifting under you? Is there support you could reach for?'
+  },
+  {
+    id:'teeth',
+    label:'Teeth / Mouth',
+    keywords:['tooth','teeth','dentist','mouth','jaw'],
+    meaning:'May reflect anxiety about appearance, self-worth, or feeling unable to speak your truth.',
+    prompt:'Is there anything you wish you could say or express more confidently right now?'
+  },
+  {
+    id:'chase',
+    label:'Being Chased',
+    keywords:['chase','chasing','ran away','running away','pursued','pursuer'],
+    meaning:'Can point to something you’re avoiding — a feeling, conversation, or responsibility.',
+    prompt:'What are you most tempted to run from in this season of life? What would support look like instead?'
+  },
+  {
+    id:'flying',
+    label:'Flying',
+    keywords:['fly','flying','soaring','hovering','lifted off'],
+    meaning:'Often connected with freedom, confidence, or the longing to rise above limits.',
+    prompt:'Where in your life are you ready to feel lighter or more free?'
+  },
+  {
+    id:'water',
+    label:'Water',
+    keywords:['water','ocean','sea','river','lake','rain','storm','flood','waves'],
+    meaning:'Frequently mirrors your emotional climate — calm water for ease, stormy water for turbulence.',
+    prompt:'How would you describe your emotional weather lately: calm, choppy, or stormy?'
+  },
+  {
+    id:'snake',
+    label:'Snakes',
+    keywords:['snake','serpent'],
+    meaning:'Symbolizes transformation, healing, or hidden fears — depending on how you feel toward the snake.',
+    prompt:'Is there a change or fear that is quietly moving beneath the surface for you?'
+  },
+  {
+    id:'death',
+    label:'Death / Endings',
+    keywords:['died','death','funeral','grave','coffin','dead'],
+    meaning:'Usually points to endings, transitions, or the old making way for the new rather than literal death.',
+    prompt:'What chapter might be closing in your life, and what tender new one might be beginning?'
+  },
+  {
+    id:'baby',
+    label:'Baby / Pregnancy',
+    keywords:['baby','pregnant','pregnancy','newborn','childbirth'],
+    meaning:'Can represent new beginnings, ideas, or responsibilities that need care and protection.',
+    prompt:'Is there a new project, relationship, or version of you that feels fragile and precious right now?'
+  },
+  {
+    id:'house',
+    label:'House / Rooms',
+    keywords:['house','home','apartment','room','attic','basement','hallway'],
+    meaning:'Houses often stand in for the self. Different rooms can mirror different areas of your inner world.',
+    prompt:'Did any room feel especially meaningful? What part of your life might it echo?'
+  },
+  {
+    id:'exam',
+    label:'School / Exams',
+    keywords:['test','exam','school','classroom','teacher','homework'],
+    meaning:'Connected with evaluation, pressure to perform, or old patterns from earlier life stages.',
+    prompt:'Where do you feel you’re “being graded” right now — by yourself or others?'
+  },
+
+  {
+    id:'naked',
+    label:'Being Naked',
+    keywords:['naked','undressed','no clothes','exposed'],
+    meaning:'Often tied to vulnerability, fear of judgment, or feeling unprepared.',
+    prompt:'Where in your life do you feel exposed or worried about how others see you?'
+  },
+  {
+    id:'lost',
+    label:'Being Lost',
+    keywords:['lost','can’t find','wandering','confused','directionless'],
+    meaning:'May reflect uncertainty about direction, identity, or next steps.',
+    prompt:'Where are you craving clarity or guidance right now?'
+  },
+  {
+    id:'late',
+    label:'Running Late',
+    keywords:['late','missed','deadline','rush','hurry'],
+    meaning:'Often linked to pressure, missed opportunities, or fear of falling behind.',
+    prompt:'Do you feel rushed or like you’re not keeping up in some area of life?'
+  },
+  {
+    id:'car',
+    label:'Car / Driving',
+    keywords:['car','driving','vehicle','crash','road','steering'],
+    meaning:'Represents direction and control in life — who’s driving matters.',
+    prompt:'Do you feel in control of your path, or is something else steering right now?'
+  },
+  {
+    id:'falling_teeth_break',
+    label:'Teeth Breaking / Falling Out',
+    keywords:['teeth falling','tooth broke','crumbling teeth'],
+    meaning:'Often reflects stress, loss of power, or concerns about image and communication.',
+    prompt:'Where do you feel a loss of control or confidence in how you’re showing up?'
+  },
+  {
+    id:'shadow',
+    label:'Dark Figure / Shadow',
+    keywords:['shadow','dark figure','unknown person','figure'],
+    meaning:'May represent the unknown, repressed parts of yourself, or unresolved fear.',
+    prompt:'Is there a part of yourself you’ve been avoiding or not fully facing?'
+  },
+  {
+    id:'falling_object',
+    label:'Something Falling',
+    keywords:['object fell','dropping object','things falling'],
+    meaning:'Can symbolize fear of losing control or something “slipping away.”',
+    prompt:'What feels unstable or at risk of slipping through your hands?'
+  },
+  {
+    id:'door',
+    label:'Doors',
+    keywords:['door','opening door','closed door','locked door'],
+    meaning:'Represents opportunities, transitions, or choices.',
+    prompt:'Is there a door in your life you’re hesitant to open or close?'
+  },
+  {
+    id:'stairs',
+    label:'Stairs / Elevation',
+    keywords:['stairs','climbing','descending','steps'],
+    meaning:'Often tied to progress, growth, or setbacks depending on direction.',
+    prompt:'Do you feel like you’re moving forward, or struggling to gain ground?'
+  },
+  {
+    id:'mirror',
+    label:'Mirror / Reflection',
+    keywords:['mirror','reflection','looking glass'],
+    meaning:'Points to self-image, identity, and self-awareness.',
+    prompt:'What are you currently noticing about yourself that feels important?'
+  },
+  {
+    id:'phone',
+    label:'Phone / Communication',
+    keywords:['phone','calling','texting','no signal','missed call'],
+    meaning:'Relates to connection, communication, or feeling unheard.',
+    prompt:'Is there a message you’re trying to send or receive right now?'
+  },
+  {
+    id:'fire',
+    label:'Fire',
+    keywords:['fire','burning','flames','wildfire'],
+    meaning:'Can symbolize passion, anger, destruction, or transformation.',
+    prompt:'Is something in your life intensifying — and does it feel creative or overwhelming?'
+  },
+  {
+    id:'falling_from_height',
+    label:'Falling From Height',
+    keywords:['fall from building','cliff','edge','high place'],
+    meaning:'A heightened version of falling — often tied to fear of failure after progress.',
+    prompt:'Are you afraid of losing something you’ve worked hard to build?'
+  },
+  {
+    id:'animals',
+    label:'Animals',
+    keywords:['animal','dog','cat','wild animal','creature'],
+    meaning:'Often represent instincts, emotions, or traits depending on the animal.',
+    prompt:'What qualities did the animal show, and do you recognize them in yourself?'
+  },
+  {
+    id:'paralysis',
+    label:'Unable to Move',
+    keywords:['can’t move','frozen','paralyzed','stuck'],
+    meaning:'May reflect feeling powerless, stuck, or unable to act in waking life.',
+    prompt:'Where do you feel blocked or unable to take action right now?'
+  },
+  {
+    id:'money',
+    label:'Money / Wealth',
+    keywords:['money','cash','rich','poor','coins','wallet'],
+    meaning:'Often tied to self-worth, value, or security rather than literal finances.',
+    prompt:'How do you currently feel about your own value or security?'
+  },
+  {
+    id:'crowd',
+    label:'Crowds',
+    keywords:['crowd','people','busy','packed'],
+    meaning:'Can reflect overwhelm, social pressure, or loss of individuality.',
+    prompt:'Do you feel lost in others’ expectations or overwhelmed socially?'
+  },
+  {
+    id:'escape',
+    label:'Trying to Escape',
+    keywords:['escape','trapped','can’t get out','locked in'],
+    meaning:'Suggests a desire for freedom from a situation, emotion, or pattern.',
+    prompt:'What are you longing to break free from right now?'
+  },
+  {
+    id:'falling_slow',
+    label:'Falling Slowly',
+    keywords:['slow fall','floating fall'],
+    meaning:'A softer version of falling — may reflect surrender or gradual change.',
+    prompt:'Is there something you’re slowly letting go of or easing into?'
+  }
+];
+
+const STORAGE_KEY = 'dreamscript_entries_v1';
+
+// ===== Helpers =====
+
+function $(id){ return document.getElementById(id); }
+
+function todayISO(){
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function loadEntries(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  }catch(e){
+    return [];
+  }
+}
+
+function saveEntries(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+// ===== Build symbol chips =====
+
+const chipsContainer = $('symbolChips');
+
+SYMBOLS.forEach(sym=>{
+  const chip = document.createElement('button');
+  chip.type = 'button';
+  chip.className = 'symbol-chip';
+  chip.dataset.id = sym.id;
+  chip.innerHTML = `<span class="dot"></span>${sym.label}`;
+  chip.addEventListener('click', ()=>{
+    chip.classList.toggle('selected');
+    renderInsights();
+  });
+  chipsContainer.appendChild(chip);
+});
+
+function getSelectedSymbolIds(){
+  return Array.from(document.querySelectorAll('.symbol-chip.selected'))
+    .map(chip=>chip.dataset.id);
+}
+
+// ===== Insights rendering =====
+
+function renderInsights(){
+  const box = $('insightsBox');
+  const selected = getSelectedSymbolIds();
+  if(!selected.length){
+    box.innerHTML = `<div style="font-size:13px;color:#7d6753;">
+      Select a symbol or tap “Scan For Symbols” to see gentle reflections.
+    </div>`;
+    return;
+  }
+  box.innerHTML = '';
+  selected.forEach(id=>{
+    const sym = SYMBOLS.find(s=>s.id===id);
+    if(!sym) return;
+    const div = document.createElement('div');
+    div.className = 'insight-item';
+    div.innerHTML = `
+      <div class="insight-title">${sym.label}</div>
+      <div class="insight-meaning">${sym.meaning}</div>
+      <div class="insight-prompt"><strong>Reflection:</strong> ${sym.prompt}</div>
+    `;
+    box.appendChild(div);
+  });
+}
+
+// ===== Scan dream text for symbols =====
+
+function scanDream(){
+  const text = ($('dreamText').value || '').toLowerCase();
+  if(!text.trim()){
+    alert('Write a few lines about your dream first, then I’ll gently scan for symbols.');
+    return;
+  }
+
+  // Clear previous selection
+  document.querySelectorAll('.symbol-chip').forEach(chip=>chip.classList.remove('selected'));
+
+  SYMBOLS.forEach(sym=>{
+    // If any keyword is present, select that symbol
+    const hit = sym.keywords.some(kw => text.includes(kw.toLowerCase()));
+    if(hit){
+      const chip = document.querySelector(`.symbol-chip[data-id="${sym.id}"]`);
+      if(chip) chip.classList.add('selected');
+    }
+  });
+
+  renderInsights();
+}
+
+// ===== Clear form =====
+
+function clearForm(){
+  $('dreamTitle').value = '';
+  $('dreamText').value = '';
+  document.querySelectorAll('.symbol-chip').forEach(chip=>chip.classList.remove('selected'));
+  renderInsights();
+}
+
+// ===== Save & load dreams =====
+
+let entries = loadEntries();
+
+function renderSavedList(){
+  const list = $('savedList');
+  list.innerHTML = '';
+  if(!entries.length){
+    list.innerHTML = `<div style="font-size:13px;color:#8a7663;">No dreams saved yet. Your next one can be the first.</div>`;
+    return;
+  }
+  entries.slice().reverse().forEach(entry=>{
+    const div = document.createElement('div');
+    div.className = 'saved-item';
+    div.dataset.id = entry.id;
+    const title = entry.title || '(untitled dream)';
+    div.innerHTML = `
+      <span>${title}</span>
+      <span class="date">${entry.date}</span>
+    `;
+    div.addEventListener('click', ()=>loadEntry(entry.id));
+    list.appendChild(div);
+  });
+}
+
+function saveDream(){
+  const date = $('dreamDate').value || todayISO();
+  const title = $('dreamTitle').value.trim();
+  const text = $('dreamText').value.trim();
+  if(!text){
+    alert('Write your dream first — even a few lines is enough.');
+    return;
+  }
+  const symbolIds = getSelectedSymbolIds();
+  const id = Date.now().toString();
+
+  const entry = {id,date,title,text,symbolIds};
+  entries.push(entry);
+  saveEntries(entries);
+  renderSavedList();
+  alert('Dream saved softly to this device.');
+}
+
+function loadEntry(id){
+  const entry = entries.find(e=>e.id===id);
+  if(!entry) return;
+  $('dreamDate').value = entry.date;
+  $('dreamTitle').value = entry.title || '';
+  $('dreamText').value = entry.text;
+
+  document.querySelectorAll('.symbol-chip').forEach(chip=>chip.classList.remove('selected'));
+  (entry.symbolIds || []).forEach(symId=>{
+    const chip = document.querySelector(`.symbol-chip[data-id="${symId}"]`);
+    if(chip) chip.classList.add('selected');
+  });
+  renderInsights();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ===== Wiring =====
+
+$('dreamDate').value = todayISO();
+$('scanBtn').addEventListener('click', scanDream);
+$('clearBtn').addEventListener('click', clearForm);
+$('saveBtn').addEventListener('click', saveDream);
+
+renderSavedList();
+renderInsights();
+</script>
+</body>
+</html>
