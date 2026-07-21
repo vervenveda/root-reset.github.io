@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Morning Reflections — Night Sanctum Gold</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+:root{
+  --night:#0d0a08;
+  --gold-deep:#b58b25;
+  --gold:#d9b878;
+  --gold-soft:#e6c77d;
+  --ink:#fffaf2;
+  --parchment:rgba(30,25,18,0.85);
+  --radius:20px;
+  --shadow:0 14px 40px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% -20%, #3d2b10 0%, var(--night) 90%),
+    var(--night);
+  font-family:"Cormorant Garamond","Georgia",serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px;
+  color:var(--ink);
+}
+
+.reflection-box{
+  background:var(--parchment);
+  border:1px solid rgba(217,184,120,0.25);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  max-width:440px;
+  width:100%;
+  padding:38px 34px 28px;
+  text-align:center;
+  backdrop-filter:blur(8px);
+  animation:fadeIn 1.2s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+h1{
+  font-family:"Cinzel",serif;
+  font-size:1.9em;
+  color:var(--gold);
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  margin-bottom:.7em;
+}
+.reflection{
+  font-size:1.15em;
+  line-height:1.6;
+  color:var(--ink);
+  margin-bottom:1.8em;
+  white-space:pre-line;
+  transition:opacity .3s;
+}
+button{
+  font-family:"Cinzel",serif;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:.95em;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  color:#1a1409;
+  padding:10px 26px;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.5);
+  transition:transform .2s,box-shadow .2s;
+}
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 24px rgba(0,0,0,.6);
+}
+footer{
+  text-align:center;
+  margin-top:22px;
+  font-size:.8em;
+  color:rgba(255,255,240,0.6);
+}
+@media(max-width:500px){
+  .reflection-box{padding:24px 7vw;}
+  h1{font-size:1.5em;}
+}
+</style>
+</head>
+
+<body>
+  <div class="reflection-box">
+    <h1>Morning Reflection</h1>
+    <div class="reflection" id="reflection"></div>
+    <button onclick="newReflection()">New Reflection</button>
+    <footer>PLERA · Morning Reflection — Night Sanctum Gold © 2026</footer>
+  </div>
+
+<script>
+const REFLECTIONS = [
+  'The sun peeks over the hill to say hello. Stretch your arms, and smile at the brand new day. You are the sparkle, today is your sky - shine with joy, with laughter, with love.',
+  'The birds are singing just for you. Listen closely, and let their songs fill your heart. You are the melody, today is your tune - sing with courage, with kindness, with light.',
+  'The morning breeze dances through the trees. Take a deep breath, and feel how alive you are. You are the leaf, today is your wind - move with freedom, with joy, with grace.',
+  'The world wakes up in color and sound. Open your eyes, and see how magical it is. You are the rainbow, today is your sky - shine with hope, with play, with wonder.',
+  'The first light touches the sleepy clouds. Wave hello, and start your adventure. You are the explorer, today is your map - journey with curiosity, with courage, with care.',
+  'The dew sparkles like tiny diamonds in the grass. Step softly, and notice the beauty beneath your feet. You are the treasure, today is your find - shine with wonder, with peace, with joy.',
+  'The sun says, “wake up little dreamer.” Rub your eyes, and bring your dreams to life. You are the dream, today is your day - grow with imagination, with joy, with heart.',
+  'The sky paints itself in pink and gold. Take a moment, and let it fill your thoughts with warmth. You are the painter, today is your canvas - color it with kindness, with love, with fun.',
+  'The wind whispers secrets through the leaves. Listen closely, and carry its calm with you. You are the whisper, today is your breeze - move with peace, with joy, with light.',
+  'A new day has come with open arms. Step into it, and let it hug you tight. You are the smile, today is your story - share it with laughter, with hope, with love.',
+  'The birds flap their wings across the dawn. Feel their freedom, and stretch your own. You are the feather, today is your flight - soar with courage, with joy, with peace.',
+  'The morning sun peeks through your window. Let it tickle your cheeks, and wake your dreams. You are the light, today is your glow - shine with faith, with joy, with care.',
+  'The clouds drift softly across the sky. Watch them float, and let your worries drift too. You are the breeze, today is your air - flow with peace, with joy, with love.',
+  'A tiny flower opens to greet the day. Be like that flower, and open your heart too. You are the bloom, today is your garden - grow with kindness, with wonder, with grace.',
+  'The stars say goodbye as the sun says hello. Wave to both, and thank them for their light. You are the sparkle, today is your shine - glow with joy, with faith, with peace.',
+  'The day begins with a soft hello. Whisper back, and start with a smile. You are the voice, today is your song - speak with kindness, with joy, with love.',
+  'The sun climbs higher with every minute. Let it remind you, you can rise too. You are the sunshine, today is your chance - grow with courage, with play, with care.',
+  'The trees stand tall in the morning glow. Stand tall too, and feel your strength inside. You are the tree, today is your ground - grow with peace, with pride, with love.',
+  'The morning air smells fresh and new. Take a deep breath, and feel your heart smile. You are the freshness, today is your breeze - move with joy, with calm, with light.',
+  'The world is waiting for your laughter. Share it freely, and fill the air with joy. You are the giggle, today is your sound - ring with happiness, with love, with peace.',
+  'The sunlight sparkles on the water’s edge. Let it remind you, you can shine anywhere. You are the wave, today is your sea - flow with courage, with fun, with grace.',
+  'The morning calls softly through the window. Answer it gently, and begin your story. You are the author, today is your page - write it with wonder, with laughter, with light.',
+  'Each sunrise is a new beginning. Take its hand, and start with hope. You are the start, today is your song - sing with joy, with courage, with peace.',
+  'The wind tickles the grass awake. Giggle with it, and feel the joy of being alive. You are the laughter, today is your breeze - move with play, with love, with peace.',
+  'The sun stretches across the sleepy sky. Stretch with it, and feel your heart open wide. You are the sunrise, today is your glow - rise with happiness, with care, with love.',
+  'The morning light peeks over the garden wall. Smile back, and welcome its warmth. You are the garden, today is your bloom - grow with faith, with peace, with fun.',
+  'The sky glows with colors of promise. Let them remind you, every day is new. You are the color, today is your world - paint it with joy, with laughter, with love.',
+  'The morning sings in quiet tones. Listen closely, and find your own song. You are the note, today is your melody - play it with kindness, with hope, with peace.',
+  'The first light hugs the earth awake. Let it hug you too, and start the day with peace. You are the hug, today is your love - share it with joy, with care, with grace.',
+  'The trees whisper softly in the dawn. Hear their secrets, and let them calm your mind. You are the branch, today is your breeze - sway with peace, with balance, with light.',
+  'A butterfly dances in the morning sun. Watch it flutter, and let your heart feel light. You are the wings, today is your sky - fly with freedom, with joy, with love.',
+  'The clouds drift slow and kind. Let them remind you, life can move gently too. You are the cloud, today is your sky - float with peace, with wonder, with joy.',
+  'The world is full of bright beginnings. Take one step, and make it your own. You are the step, today is your path - walk with courage, with care, with love.',
+  'The birds hop from branch to branch. Be like them, and find joy in small things. You are the bird, today is your song - sing with laughter, with light, with peace.',
+  'The sunlight plays on your windowpane. Let it in, and let it warm your dreams. You are the warmth, today is your day - glow with faith, with joy, with love.',
+  'The morning is a gentle hello from the earth. Say hello back, and smile inside. You are the greeting, today is your joy - share it with peace, with love, with care.',
+  'The air smells like adventure and hope. Take a deep breath, and begin your journey. You are the explorer, today is your trail - walk with curiosity, with laughter, with light.',
+  'The sunrise paints the clouds in gold. Watch closely, and see how beautiful change can be. You are the color, today is your world - shine with kindness, with peace, with joy.',
+  'The world whispers, “you belong here.” Listen softly, and believe it’s true. You are the heart, today is your beat - move with love, with joy, with peace.',
+  'A gentle morning breeze brushes your face. Let it remind you, the world is kind. You are the breeze, today is your air - flow with laughter, with light, with love.',
+  'The sunlight peeks between the trees. Step into it, and feel brave and bright. You are the sparkle, today is your shine - glow with joy, with hope, with grace.',
+  'The day begins with tiny miracles. Notice them, and carry them in your smile. You are the miracle, today is your gift - share it with love, with care, with peace.',
+  'The morning hums a quiet tune. Hum along, and let your joy be heard. You are the song, today is your music - play with courage, with laughter, with light.',
+  'The grass sparkles with drops of morning light. Look closely, and see how magic hides in small things. You are the sparkle, today is your shine - glow with wonder, with peace, with love.',
+  'Each morning is a treasure chest of moments. Open it wide, and find something new. You are the treasure, today is your find - share it with joy, with kindness, with care.',
+  'The soft light paints the world awake. Let it remind you, you can shine too. You are the brush, today is your color - paint with love, with laughter, with light.',
+  'A new day tiptoes in with gentle feet. Welcome it, and walk beside its peace. You are the step, today is your path - move with calm, with care, with joy.',
+  'The sun rises just for you. Let it fill your heart with warmth. You are the glow, today is your light - shine with love, with peace, with grace.',
+  'The earth whispers, “thank you for being here.” Smile back, and whisper, “you’re welcome.” You are the smile, today is your gift - share it with kindness, with joy, with love.',
+  'Morning arrives like a soft song of hope. Sing along, and let your heart dance. You are the dancer, today is your stage - move with joy, with peace, with love.',
+  `As you wake, remember:\nPossibility stirs with the sun.\nMay you grow gently today,\nunfolding like petals\nunder a healing sky.`,
+  `Give yourself permission\nto begin again.\nToday, let kindness be your language\nand wonder your map.`
+];
+
+function newReflection(){
+  const i = Math.floor(Math.random()*REFLECTIONS.length);
+  const box = document.getElementById('reflection');
+  box.style.opacity=0;
+  setTimeout(()=>{
+    box.textContent = REFLECTIONS[i];
+    box.style.opacity=1;
+  },200);
+}
+newReflection();
+</script>
+</body>
+</html>
