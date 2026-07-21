@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The First Hour™ — Morning Sanctuary</title>
+
+  <!-- Sacred Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* PLERA Sacred Palette */
+      --parchment-1: #f7f3ea;
+      --parchment-2: #f0e9dc;
+      --parchment-3: #f5efe3;
+      --midnight:   #0b1020;
+      --gold:       #d9b878;
+      --gold-deep:  #b89252;
+      --teal-soft:  #5ccac0;
+      --teal-deep:  #1f7f78;
+      --ink:        #2a2018;
+
+      /* Sacred Radii & Spacing */
+      --r7: 7px;
+      --r9: 9px;
+      --r11: 11px;
+      --r21: 21px;
+
+      --s7: 7px;
+      --s11: 11px;
+      --s14: 14px;
+      --s21: 21px;
+      --s27: 27px;
+
+      --shadow-soft: 0 7px 21px rgba(0,0,0,0.08);
+      --shadow-lift: 0 9px 27px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 10% 0%, #ffffff, #f7f3ea 40%, #f0e9dc 100%);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .ms-shell {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: var(--s21) var(--s14) var(--s27);
+    }
+
+    .ms-header {
+      text-align: center;
+      margin-bottom: var(--s21);
+    }
+
+    .ms-title {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--midnight);
+      margin-bottom: var(--s7);
+    }
+
+    .ms-ribbon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(217,184,120,0.26), rgba(92,202,192,0.22));
+      border: 1px solid rgba(184,146,82,0.55);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      color: #4a3924;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: var(--s7);
+    }
+
+    .ms-subtitle {
+      font-size: 16px;
+      color: #6c5b45;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .ms-clock {
+      margin-top: var(--s11);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      color: #7c6a54;
+    }
+
+    .ms-grid {
+      margin-top: var(--s21);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--s21);
+    }
+
+    .ms-card {
+      background: linear-gradient(145deg, #ffffff, #f7f3ea);
+      border-radius: var(--r11);
+      padding: var(--s21) var(--s14);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ms-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 10% 0%, rgba(217,184,120,0.12), transparent 52%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .ms-card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s7);
+      margin-bottom: var(--s14);
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .ms-card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      color: var(--midnight);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .ms-chip {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      padding: 3px 11px;
+      border-radius: 999px;
+      background: rgba(92,202,192,0.12);
+      color: var(--teal-deep);
+      border: 1px solid rgba(92,202,192,0.3);
+      max-width: 222px;
+      text-align: center;
+      line-height: 1.4;
+      white-space: normal;
+    }
+
+    .ms-card-body {
+      position: relative;
+      z-index: 1;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #5a4a37;
+    }
+
+    .ms-note {
+      font-size: 13px;
+      margin-bottom: var(--s11);
+      color: #7c6a54;
+    }
+
+    .ms-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(120deg, var(--teal-soft), var(--gold));
+      color: #0b1020;
+      border: none;
+      border-radius: var(--r9);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-family: 'Futura', 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 300;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      margin-top: var(--s11);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+    }
+
+    .ms-card-body .ms-btn {
+      display: flex;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .ms-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+      filter: brightness(1.03);
+    }
+
+    .ms-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 9px rgba(0,0,0,0.18);
+    }
+
+    .ms-btn.small {
+      padding: 5px 11px;
+      font-size: 11px;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.14);
+    }
+
+    /* ========== BREATH RITUAL ========== */
+
+    .breath-shell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s11);
+    }
+
+    .breath-circle {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #d7f2ec 45%, #8fd6c7 100%);
+      box-shadow: 0 9px 27px rgba(31,127,120,0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 3.5s cubic-bezier(0.19,1,0.22,1);
+      will-change: transform;
+    }
+
+    .breath-label {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      color: var(--teal-deep);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .breath-subtext {
+      font-size: 13px;
+      color: #7c6a54;
+      text-align: center;
+      max-width: 220px;
+    }
+
+    .breath-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s11);
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+    }
+
+    select, textarea, input[type="text"] {
+      font-family: 'Cormorant Garamond', serif;
+      border-radius: var(--r7);
+      border: 1px solid rgba(0,0,0,0.12);
+      padding: 6px 9px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+    }
+
+    .ms-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ms-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--teal-soft);
+    }
+
+    /* ========== MUSIC NEST ========== */
+
+    .music-box {
+      margin-top: var(--s7);
+      background: rgba(255,255,255,0.78);
+      border-radius: var(--r9);
+      padding: var(--s11);
+      box-shadow: 0 3px 18px rgba(0,0,0,0.05);
+    }
+
+    .music-row {
+      display: flex;
+      gap: var(--s7);
+      margin-bottom: var(--s7);
+    }
+
+    .music-row input {
+      flex: 1 1 auto;
+    }
+
+    .music-row button {
+      font-family: 'Futura', 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: var(--r7);
+      border: none;
+      background: var(--teal-soft);
+      color: #0b1020;
+      cursor: pointer;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.12);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    .music-row button:hover {
+      filter: brightness(1.04);
+    }
+
+    .song-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .song-list li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .song-del {
+      background: none;
+      border: none;
+      color: #c2463a;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    /* ========== JOURNAL ========== */
+
+    .journal-area {
+      margin-top: var(--s7);
+    }
+
+    .journal-area textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+      border-radius: var(--r11);
+      background: rgba(255,255,255,0.94);
+    }
+
+    .journal-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #7c6a54;
+      margin-top: 4px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* ========== AFFIRMATIONS ========== */
+
+    .aff-display {
+      margin-top: var(--s7);
+      padding: var(--s11);
+      border-radius: var(--r11);
+      background: linear-gradient(135deg, #fdfaf4, #f7f3ea);
+      border: 1px solid rgba(217,184,120,0.6);
+      font-size: 15px;
+      line-height: 1.7;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .aff-display::before {
+      content: "✶";
+      position: absolute;
+      top: 6px;
+      right: 11px;
+      font-size: 17px;
+      color: rgba(184,146,82,0.4);
+    }
+
+    .aff-form {
+      margin-top: var(--s11);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s7);
+    }
+
+    .aff-form input {
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .aff-actions {
+      display: flex;
+      gap: var(--s7);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    @media (max-width: 640px) {
+      .ms-shell {
+        padding: var(--s21) var(--s11) var(--s27);
+      }
+      .ms-title {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ms-shell">
+    <header class="ms-header">
+      <div class="ms-ribbon">The First Hour™ · 7:11 Ritual Window</div>
+      <div class="ms-title">Morning Sanctuary</div>
+      <div class="ms-subtitle">
+        A gentle PLERA ritual space for breath, music, journaling, and affirmations — 
+        to begin the day in sovereignty and calm.
+      </div>
+      <div class="ms-clock" id="msClock"></div>
+    </header>
+
+    <section class="ms-grid">
+
+      <!-- 🌬 BREATH RITUAL CARD -->
+      <article class="ms-card" id="breathCard">
+        <div class="ms-card-header">
+          <div class="ms-card-title">AuraenSpire Breath</div>
+          <div class="ms-chip">Breath · Nervous System Reset</div>
+        </div>
+        <div class="ms-card-body">
+          <div class="ms-note">
+            Follow the lantern of your breath. The circle rises and falls as you soften your body back into peace.
+          </div>
+
+          <div class="breath-shell">
+            <div class="breath-circle" id="breathCircle">
+              <div class="breath-label" id="breathLabel">Ready?</div>
+            </div>
+            <div class="breath-subtext" id="breathSub">
+              Choose your minutes, keep Voice Guidance on if it comforts you, and tap Begin.
+            </div>
+
+            <div class="breath-controls">
+              <label for="breathMinutes">Minutes:</label>
+              <select id="breathMinutes">
+                <option>1</option>
+                <option>2</option>
+                <option selected>3</option>
+                <option>5</option>
+                <option>7</option>
+              </select>
+
+              <div class="ms-toggle">
+                <input type="checkbox" id="breathVoice" checked>
+                <label for="breathVoice">Voice Guidance</label>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;">
+              <button class="ms-btn small" id="breathStartBtn">Begin Ritual</button>
+              <button class="ms-btn small" id="breathStopBtn" style="display:none;background:linear-gradient(120deg,#c9625a,#b89252);color:#fff;">
+                End Session
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 🎵 MUSIC NEST CARD -->
+      <article class="ms-card">
+        <div class="ms-card-header">
+          <div class="ms-card-title">Morning Music Nest</div>
+          <div class="ms-chip">Sound · Atmosphere</div>
+        </div>
+        <div class="ms-card-body">
+          <div class="ms-note">
+            Build a soft playlist of songs, rain sound, Qur’an recitation, or nature loops that hold your morning.
+          </div>
+
+          <div class="music-box">
+            <div class="music-row">
+              <input id="musicUrl" type="text" placeholder="Paste audio or YouTube URL…"/>
+              <button id="addSongBtn">Add</button>
+            </div>
+            <ul class="song-list" id="songList"></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 📓 JOURNAL CARD -->
+      <article class="ms-card">
+        <div class="ms-card-header">
+          <div class="ms-card-title">Morning Pages</div>
+          <div class="ms-chip">Journal · Inner Voice</div>
+        </div>
+        <div class="ms-card-body">
+          <div class="ms-note">
+            A private page for whatever needs to spill out — gratitude, worries, prayers, ideas. Saved only in your device.
+          </div>
+          <div class="journal-area">
+            <textarea id="journalText" placeholder="Begin with a single sentence: &quot;This morning, I feel…&quot;"></textarea>
+            <div class="journal-meta">
+              <span id="journalWords">0 words</span>
+              <span id="journalStatus">Saved • —</span>
+            </div>
+          </div>
+          <button class="ms-btn small" id="journalClearBtn" style="margin-top:var(--s7);background:linear-gradient(120deg,#f8e7c4,#f7f3ea);">
+            Clear Page (Stay Gentle)
+          </button>
+        </div>
+      </article>
+
+      <!-- ✨ AFFIRMATION CARD -->
+      <article class="ms-card">
+        <div class="ms-card-header">
+          <div class="ms-card-title">Affirmation Lantern</div>
+          <div class="ms-chip">Words · Repatterning</div>
+        </div>
+        <div class="ms-card-body">
+          <div class="ms-note">
+            One sentence of kindness can tilt the whole day toward hope. Draw one, or write your own.
+          </div>
+
+          <div class="aff-display" id="affDisplay">
+            Tap “New Light” to receive a gentle affirmation.
+          </div>
+
+          <div class="aff-form">
+            <input type="text" id="affInput" placeholder="Add your own affirmation (optional)…"/>
+            <div class="aff-actions">
+              <button class="ms-btn small" id="affNewBtn">New Light</button>
+              <button class="ms-btn small" id="affAddBtn" style="background:linear-gradient(120deg,#f7d7b3,#d9b878);">
+                Save to My Lantern
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </div>
+
+  <script>
+    // ========= GENERAL CLOCK =========
+    function updateClock() {
+      const el = document.getElementById('msClock');
+      const now = new Date();
+      const opts = { weekday: 'long', month: 'long', day: 'numeric' };
+      const dateStr = now.toLocaleDateString(undefined, opts);
+      const timeStr = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+      el.textContent = dateStr + " · " + timeStr;
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // ========= BREATH RITUAL =========
+    const breathCircle = document.getElementById('breathCircle');
+    const breathLabel  = document.getElementById('breathLabel');
+    const breathSub    = document.getElementById('breathSub');
+    const breathMinutes= document.getElementById('breathMinutes');
+    const breathVoice  = document.getElementById('breathVoice');
+    const breathStart  = document.getElementById('breathStartBtn');
+    const breathStop   = document.getElementById('breathStopBtn');
+
+    const BREATH_PHASES = [
+      { label: "Breathe In", secs: 4, scale: 1.18,
+        text: "Fill your lungs slowly. Imagine light moving up your spine." },
+      { label: "Hold", secs: 3, scale: 1.0,
+        text: "Float at the top of the breath. Soften your shoulders." },
+      { label: "Breathe Out", secs: 5, scale: 0.80,
+        text: "Let the breath stream out like a ribbon, long and gentle." },
+      { label: "Hold", secs: 3, scale: 1.0,
+        text: "Rest in the quiet. Notice any space inside your chest." }
+    ];
+
+    let breathActive = false;
+    let breathTimer  = null;
+    let breathPhaseIndex = 0;
+    let breathRemaining = 0;
+
+    function speakSoft(text) {
+      if (!breathVoice.checked) return;
+      if (!('speechSynthesis' in window)) return;
+      const u = new SpeechSynthesisUtterance(text);
+      const voices = window.speechSynthesis.getVoices();
+      let chosen = voices.find(v => v.lang.startsWith('en') && /Jenny|Aria|Samantha|Natural|Google/i.test(v.name))
+                || voices.find(v => v.lang.startsWith('en'))
+                || null;
+      if (chosen) u.voice = chosen;
+      u.rate = 0.88;
+      u.pitch = 1.02;
+      u.volume = 0.86;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+
+    function runBreathPhase(totalSecondsLeft) {
+      if (!breathActive) return;
+      const phase = BREATH_PHASES[breathPhaseIndex];
+      breathLabel.textContent = phase.label;
+      breathSub.textContent   = phase.text;
+      breathCircle.style.transform = "scale(" + phase.scale + ")";
+      speakSoft(phase.label.replace("Hold", "Hold gently"));
+
+      breathRemaining = totalSecondsLeft - phase.secs;
+      breathPhaseIndex = (breathPhaseIndex + 1) % BREATH_PHASES.length;
+
+      breathTimer = setTimeout(() => {
+        if (breathRemaining <= 0) {
+          stopBreath();
+        } else {
+          runBreathPhase(breathRemaining);
+        }
+      }, phase.secs * 1000);
+    }
+
+    function startBreath() {
+      if (breathActive) return;
+      const mins = parseInt(breathMinutes.value, 10) || 1;
+      const total = mins * 60;
+      breathActive = true;
+      breathPhaseIndex = 0;
+      breathRemaining = total;
+      breathStart.style.display = "none";
+      breathStop.style.display = "inline-flex";
+      speakSoft("Beginning your breath ritual now.");
+      runBreathPhase(breathRemaining);
+    }
+
+    function stopBreath() {
+      breathActive = false;
+      clearTimeout(breathTimer);
+      breathCircle.style.transform = "scale(1)";
+      breathLabel.textContent = "Complete";
+      breathSub.textContent = "Notice how your body feels after giving it a moment of care.";
+      breathStart.style.display = "inline-flex";
+      breathStop.style.display = "none";
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    }
+
+    breathStart.addEventListener('click', startBreath);
+    breathStop.addEventListener('click', stopBreath);
+
+    // ========= MUSIC NEST =========
+    const musicUrl  = document.getElementById('musicUrl');
+    const songList  = document.getElementById('songList');
+    const addSongBtn= document.getElementById('addSongBtn');
+    let songs = [];
+
+    function loadSongs() {
+      try {
+        songs = JSON.parse(localStorage.getItem('ms_music_songs') || '[]');
+      } catch(e) {
+        songs = [];
+      }
+      renderSongs();
+    }
+
+    function saveSongs() {
+      localStorage.setItem('ms_music_songs', JSON.stringify(songs));
+    }
+
+    function renderSongs() {
+      songList.innerHTML = "";
+      songs.forEach((url, i) => {
+        const li = document.createElement('li');
+        const isAudio = /\.(mp3|wav|ogg)(\?|$)/i.test(url);
+        const isYT = /(youtu\.be|youtube\.com)/i.test(url);
+
+        if (isAudio) {
+          li.innerHTML = '<audio controls src="' + url + '"></audio>';
+        } else if (isYT) {
+          let ytId = "";
+          if (url.includes("v=")) {
+            ytId = url.split("v=")[1].split("&")[0];
+          } else {
+            ytId = url.split("/").pop().split("?")[0];
+          }
+          li.innerHTML = '<iframe width="180" height="40" style="border-radius:7px;border:none;" ' +
+            'src="https://www.youtube.com/embed/' + ytId + '?rel=0" ' +
+            'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+        } else {
+          li.innerHTML = '<a href="' + url + '" target="_blank" style="font-size:13px;">' + url + '</a>';
+        }
+
+        const del = document.createElement('button');
+        del.textContent = '×';
+        del.className = 'song-del';
+        del.title = 'Remove';
+        del.addEventListener('click', () => {
+          songs.splice(i, 1);
+          saveSongs();
+          renderSongs();
+        });
+
+        li.appendChild(del);
+        songList.appendChild(li);
+      });
+    }
+
+    addSongBtn.addEventListener('click', () => {
+      const url = musicUrl.value.trim();
+      if (!url || url.length < 4) return;
+      songs.push(url);
+      saveSongs();
+      musicUrl.value = "";
+      renderSongs();
+    });
+
+    loadSongs();
+
+    // ========= JOURNAL =========
+    const journalText   = document.getElementById('journalText');
+    const journalWords  = document.getElementById('journalWords');
+    const journalStatus = document.getElementById('journalStatus');
+    const journalClear  = document.getElementById('journalClearBtn');
+
+    function updateJournalMeta() {
+      const text = journalText.value.trim();
+      const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      journalWords.textContent = words + " word" + (words === 1 ? "" : "s");
+    }
+
+    function saveJournal() {
+      const text = journalText.value;
+      localStorage.setItem('ms_journal', text);
+      const now = new Date();
+      journalStatus.textContent = "Saved • " + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    }
+
+    function loadJournal() {
+      const text = localStorage.getItem('ms_journal') || "";
+      journalText.value = text;
+      updateJournalMeta();
+      if (text) {
+        journalStatus.textContent = "Saved • previous session";
+      }
+    }
+
+    journalText.addEventListener('input', () => {
+      updateJournalMeta();
+      journalStatus.textContent = "Typing…";
+      if (journalText._saveTimer) clearTimeout(journalText._saveTimer);
+      journalText._saveTimer = setTimeout(saveJournal, 800);
+    });
+
+    journalClear.addEventListener('click', () => {
+      if (!journalText.value.trim() || confirm("Clear this page? Your text will stay cleared on this device.")) {
+        journalText.value = "";
+        updateJournalMeta();
+        saveJournal();
+      }
+    });
+
+    loadJournal();
+
+    // ========= AFFIRMATIONS =========
+    const affDisplay = document.getElementById('affDisplay');
+    const affInput   = document.getElementById('affInput');
+    const affNewBtn  = document.getElementById('affNewBtn');
+    const affAddBtn  = document.getElementById('affAddBtn');
+
+    const baseAffirmations = [
+      "I am allowed to begin again gently this morning.",
+      "My body is worthy of rest, softness, and care.",
+      "Even in uncertainty, I am held by something kind.",
+      "Today, I move at the pace of my nervous system, not my fear.",
+      "My voice, my art, and my presence matter more than I realize.",
+      "I honor my limits and treat them as holy boundaries.",
+      "I do not have to earn my worth; it is already woven into me.",
+      "Small acts of care today add up to something beautiful.",
+      "I am not late; I am arriving in my own right timing.",
+      "My sensitivity is not a flaw; it is one of my superpowers."
+    ];
+
+    let customAffirmations = [];
+
+    function loadAffirmations() {
+      try {
+        customAffirmations = JSON.parse(localStorage.getItem('ms_affirmations') || '[]');
+      } catch(e) {
+        customAffirmations = [];
+      }
+    }
+
+    function saveAffirmations() {
+      localStorage.setItem('ms_affirmations', JSON.stringify(customAffirmations));
+    }
+
+    function pickAffirmation() {
+      const all = baseAffirmations.concat(customAffirmations);
+      if (!all.length) {
+        affDisplay.textContent = "You can add your own affirmation below.";
+        return;
+      }
+      const pick = all[Math.floor(Math.random() * all.length)];
+      affDisplay.textContent = pick;
+    }
+
+    affNewBtn.addEventListener('click', pickAffirmation);
+
+    affAddBtn.addEventListener('click', () => {
+      const txt = affInput.value.trim();
+      if (!txt) return;
+      customAffirmations.push(txt);
+      saveAffirmations();
+      affInput.value = "";
+      affDisplay.textContent = txt;
+    });
+
+    loadAffirmations();
+  </script>
+</body>
+</html>
