@@ -1,0 +1,793 @@
+<!-- 🌗 Daily Rhythm Portal — Morning Gate + Evening Sanctum -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
+
+<section class="daily-rhythm-band">
+  <div class="daily-rhythm-inner">
+    <header class="daily-rhythm-header">
+      <h1 class="dr-title">Daily Rhythm Portal</h1>
+      <p class="dr-tag">Morning Gate · Evening Sanctum</p>
+      <p class="dr-sub">
+        A gentle twin-portal for your day — one gate to step through at dawn,
+        one sanctum to rest in at night. Enter whenever you need to realign,
+        release, or remember you are held.
+      </p>
+    </header>
+
+    <div class="daily-rhythm-grid">
+      <!-- 🌞 Morning Gate -->
+      <section id="morningGate" class="mg-shell">
+        <div class="mg-inner">
+          <h2 class="mg-title">Morning Gate</h2>
+          <p class="mg-tag">Centering · Intention · Blessing</p>
+          <p class="mg-sub">
+            Begin the day with one clear beam of light. Choose a tab, receive a
+            line, and carry it as your quiet compass into whatever awaits you.
+          </p>
+
+          <!-- Morning focus line -->
+          <div class="mg-focus">
+            <span class="mg-focus-label">Set the tone:</span>
+            <span class="mg-focus-line" id="mgFocusLine">
+              One simple intention for the next few hours.
+            </span>
+          </div>
+
+          <!-- Morning tabs -->
+          <nav class="mg-tabs" aria-label="Morning Gate modes">
+            <button type="button" class="mg-tab active" data-tab="centering">
+              Centering
+            </button>
+            <button type="button" class="mg-tab" data-tab="intention">
+              Intention
+            </button>
+            <button type="button" class="mg-tab" data-tab="blessing">
+              Blessing
+            </button>
+          </nav>
+
+          <!-- Morning card -->
+          <article class="mg-card" aria-live="polite">
+            <p class="mg-card-label" id="mgCardTitle">Centering</p>
+            <p class="mg-card-line" id="mgCardLine">
+              Before you look at a single screen, notice one thing that is
+              already okay.
+            </p>
+            <p class="mg-card-sub" id="mgCardSub">
+              Let your eyes land on something steady — a tree, a wall, a beam
+              of light. Let your breath match that steadiness before you move.
+            </p>
+            <button type="button" class="mg-next" id="mgNextBtn">
+              Give me another light
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- 🌙 Evening Sanctum -->
+      <section id="eveningSanctum" class="es-shell">
+        <div class="es-inner">
+          <h2 class="es-title">Evening Sanctum</h2>
+          <p class="es-tag">Reflection · Release · Gratitude</p>
+          <p class="es-sub">
+            A small night-lamp for the soul. Choose a tab, breathe with the
+            words, and gently lay down what does not need to cross the
+            threshold into tomorrow.
+          </p>
+
+          <!-- Lay It Down focus line -->
+          <div class="es-focus">
+            <span class="es-focus-label">Lay it down:</span>
+            <span class="es-focus-line" id="esFocusLine">
+              One thought you don’t need to carry into sleep.
+            </span>
+          </div>
+
+          <!-- Evening tabs -->
+          <nav class="es-tabs" aria-label="Evening Sanctum modes">
+            <button type="button" class="es-tab active" data-tab="reflection">
+              Reflection
+            </button>
+            <button type="button" class="es-tab" data-tab="release">
+              Release
+            </button>
+            <button type="button" class="es-tab" data-tab="gratitude">
+              Gratitude
+            </button>
+          </nav>
+
+          <!-- Evening card -->
+          <article class="es-card" aria-live="polite">
+            <p class="es-card-label" id="esCardTitle">Reflection</p>
+            <p class="es-card-line" id="esCardLine">
+              Where did you feel most like yourself today?
+            </p>
+            <p class="es-card-sub" id="esCardSub">
+              Let your mind walk back over the day gently. Notice what felt
+              aligned, not to judge the rest, but to learn what nourishes you.
+            </p>
+            <button type="button" class="es-next" id="esNextBtn">
+              Show me another line
+            </button>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<style>
+/* === Daily Rhythm Layout Shell === */
+
+.daily-rhythm-band{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:33px 0 40px;
+  background:
+    radial-gradient(circle at top,#f9f3e3 0%,#e6d6b3 38%,#cfb68b 72%,#b89c6f 100%);
+}
+
+.daily-rhythm-inner{
+  width:100%;
+  max-width:1110px;
+  margin:0 auto;
+  padding:24px 18px 27px;
+  border-radius:21px;
+  background:linear-gradient(180deg,#15182a 0%,#050713 78%);
+  border:1px solid rgba(60,43,18,0.55);
+  box-shadow:0 24px 72px rgba(0,0,0,0.9);
+  box-sizing:border-box;
+  color:#f7f3ea;
+}
+
+.daily-rhythm-header{
+  text-align:center;
+  margin:0 0 21px;
+}
+
+.dr-title{
+  font-family:'Cinzel','Times New Roman',serif;
+  font-size:24px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  margin:0 0 6px;
+}
+
+.dr-tag{
+  font-size:12px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:#d9b878;
+  margin:0 0 10px;
+}
+
+.dr-sub{
+  max-width:720px;
+  margin:0 auto;
+  font-size:14px;
+  line-height:1.7;
+  color:#f0e9dc;
+}
+
+/* Side-by-side grid */
+
+.daily-rhythm-grid{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:21px;
+}
+
+/* On small screens: stack them */
+@media (max-width:900px){
+  .daily-rhythm-grid{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+
+/* === Morning Gate Styles === */
+
+.mg-shell{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.mg-inner{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  padding:21px 18px 24px;
+  border-radius:21px;
+  background:linear-gradient(145deg,#fdf5e3 0%,#f7e1af 40%,#f4c575 90%);
+  border:1px solid rgba(214,163,86,0.8);
+  box-shadow:0 18px 54px rgba(0,0,0,0.55);
+  box-sizing:border-box;
+  color:#2c1b10;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* soft sunrise haze */
+.mg-inner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 15% 0%,rgba(255,255,255,0.55) 0,transparent 55%),
+    radial-gradient(circle at 90% 0%,rgba(255,255,224,0.4) 0,transparent 60%);
+  opacity:0.9;
+  pointer-events:none;
+}
+.mg-inner > *{
+  position:relative;
+  z-index:1;
+}
+
+.mg-title{
+  font-family:'Cinzel','Times New Roman',serif;
+  font-size:21px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  margin:0 0 5px;
+}
+
+.mg-tag{
+  font-size:11px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:#7a4b1c;
+  margin:0 0 10px;
+}
+
+.mg-sub{
+  max-width:420px;
+  margin:0 auto 16px;
+  font-size:13px;
+  line-height:1.7;
+  color:#4b2c14;
+}
+
+/* Morning focus line */
+
+.mg-focus{
+  max-width:420px;
+  margin:0 auto 18px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.72);
+  border:1px solid rgba(214,163,86,0.8);
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:6px;
+  align-items:center;
+}
+
+.mg-focus-label{
+  font-size:10px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:#b3752e;
+}
+
+.mg-focus-line{
+  font-size:13px;
+  color:#3a2211;
+}
+
+/* Morning tabs */
+
+.mg-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.mg-tab{
+  border:none;
+  border-radius:777px;
+  padding:6px 16px;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.7);
+  color:#4b2c14;
+  cursor:pointer;
+  border:1px solid rgba(193,140,70,0.7);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  white-space:normal;
+  line-height:1.4;
+  transition:background .18s,transform .18s,box-shadow .18s,color .18s;
+}
+
+.mg-tab:hover{
+  transform:translateY(-1px);
+  box-shadow:0 7px 21px rgba(0,0,0,0.3);
+}
+
+.mg-tab.active{
+  background:linear-gradient(135deg,#f8d28e,#f0a94a);
+  color:#3a1c0a;
+}
+
+/* Morning card */
+
+.mg-card{
+  max-width:420px;
+  margin:0 auto;
+  padding:16px 16px 19px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.9);
+  border:1px solid rgba(210,162,89,0.9);
+  box-shadow:0 14px 40px rgba(0,0,0,0.35);
+  text-align:left;
+}
+
+.mg-card-label{
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:#b3752e;
+  margin:0 0 6px;
+}
+
+.mg-card-line{
+  font-family:'Cormorant Garamond','Times New Roman',serif;
+  font-size:20px;
+  line-height:1.5;
+  margin:0 0 8px;
+  color:#2f1a0a;
+}
+
+.mg-card-sub{
+  font-size:13px;
+  line-height:1.7;
+  color:#5a3720;
+  margin:0 0 10px;
+}
+
+.mg-next{
+  border:none;
+  border-radius:999px;
+  padding:6px 16px;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:#fbe0ac;
+  color:#3a1c0a;
+  cursor:pointer;
+  border:1px solid rgba(210,162,89,0.9);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .18s,transform .18s,box-shadow .18s;
+}
+
+.mg-next:hover{
+  transform:translateY(-1px);
+  box-shadow:0 7px 21px rgba(0,0,0,0.35);
+  background:linear-gradient(135deg,#f8d28e,#f0a94a);
+}
+
+/* === Evening Sanctum Styles (Night) === */
+
+.es-shell{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.es-inner{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  padding:21px 18px 24px;
+  border-radius:21px;
+  background:linear-gradient(160deg,
+    rgba(16,20,40,0.98),
+    rgba(6,8,20,0.98));
+  border:1px solid rgba(201,173,120,0.55);
+  box-shadow:0 18px 54px rgba(0,0,0,0.75);
+  box-sizing:border-box;
+  color:#f7f3ea;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* soft star dust */
+.es-inner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 15% 10%,rgba(255,255,255,0.10) 0,transparent 55%),
+    radial-gradient(circle at 80% 0,rgba(206,178,128,0.09) 0,transparent 50%);
+  opacity:0.7;
+  pointer-events:none;
+}
+.es-inner > *{
+  position:relative;
+  z-index:1;
+}
+
+.es-title{
+  font-family:'Cinzel','Times New Roman',serif;
+  font-size:21px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  margin:0 0 6px;
+}
+
+.es-tag{
+  font-size:11px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:#d9b878;
+  margin:0 0 10px;
+}
+
+.es-sub{
+  max-width:420px;
+  margin:0 auto 16px;
+  font-size:13px;
+  line-height:1.7;
+  color:#f0e9dc;
+}
+
+/* Lay It Down */
+
+.es-focus{
+  max-width:420px;
+  margin:0 auto 18px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(7,10,24,0.9);
+  border:1px solid rgba(217,184,120,0.4);
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:7px;
+  align-items:center;
+}
+
+.es-focus-label{
+  font-size:10px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:#e8d5a4;
+}
+
+.es-focus-line{
+  font-size:13px;
+  color:#f7f3ea;
+}
+
+/* Evening tabs */
+
+.es-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.es-tab{
+  border:none;
+  border-radius:777px;
+  padding:6px 16px;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.05);
+  color:#f7f3ea;
+  cursor:pointer;
+  border:1px solid rgba(217,184,120,0.5);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  white-space:normal;
+  line-height:1.4;
+  transition:background .18s,transform .18s,box-shadow .18s,color .18s;
+}
+
+.es-tab:hover{
+  transform:translateY(-1px);
+  box-shadow:0 7px 21px rgba(0,0,0,0.45);
+}
+
+.es-tab.active{
+  background:linear-gradient(135deg,#d9b878,#b89252);
+  color:#050713;
+}
+
+/* Evening card */
+
+.es-card{
+  max-width:420px;
+  margin:0 auto;
+  padding:16px 16px 19px;
+  border-radius:18px;
+  background:radial-gradient(circle at top,
+    rgba(13,18,40,0.98) 0%,
+    rgba(5,7,18,0.98) 72%);
+  border:1px solid rgba(247,243,234,0.16);
+  box-shadow:0 18px 48px rgba(0,0,0,0.72);
+  text-align:left;
+}
+
+.es-card-label{
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:#e8d5a4;
+  margin:0 0 6px;
+}
+
+.es-card-line{
+  font-family:'Cormorant Garamond','Times New Roman',serif;
+  font-size:20px;
+  line-height:1.5;
+  margin:0 0 8px;
+  color:#fdf7eb;
+}
+
+.es-card-sub{
+  font-size:13px;
+  line-height:1.7;
+  color:#f0e9dc;
+  margin:0 0 10px;
+}
+
+.es-next{
+  border:none;
+  border-radius:999px;
+  padding:6px 16px;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.06);
+  color:#f7f3ea;
+  cursor:pointer;
+  border:1px solid rgba(217,184,120,0.5);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .18s,transform .18s,box-shadow .18s,color .18s;
+}
+
+.es-next:hover{
+  transform:translateY(-1px);
+  box-shadow:0 7px 21px rgba(0,0,0,0.45);
+  background:linear-gradient(135deg,#d9b878,#b89252);
+  color:#050713;
+}
+
+/* Tighten padding on small screens */
+@media (max-width:720px){
+  .daily-rhythm-inner{
+    padding:18px 12px 21px;
+  }
+  .mg-inner,
+  .es-inner{
+    padding:18px 12px 20px;
+  }
+  .mg-card,
+  .es-card{
+    padding:14px 12px 17px;
+  }
+}
+</style>
+
+<script>
+/* 🌞 Morning Gate Logic */
+(function(){
+  const deck = {
+    centering: [
+      {
+        line: "Before you look at a single screen, notice one thing that is already okay.",
+        sub: "Let your eyes land on something steady — a tree, a wall, a beam of light. Let your breath match that steadiness before you move.",
+        focus: "Choose one steady thing to be your anchor for this morning."
+      },
+      {
+        line: "Place one hand on your chest and one on your stomach.",
+        sub: "Feel the rise and fall under your palms. However today goes, this breath will keep returning for you again and again.",
+        focus: "Center your awareness on the place in your body that feels safest right now."
+      },
+      {
+        line: "Ask yourself softly: “What do I actually need in the next hour?”",
+        sub: "Not for the whole week or year — just this next hour. Let the answer be simple and kind.",
+        focus: "Let the next hour be shaped by need, not pressure."
+      }
+    ],
+    intention: [
+      {
+        line: "Instead of planning everything, choose one quality to carry: gentleness, courage, clarity, or honesty.",
+        sub: "Let today be less about the list and more about the way you move through the list.",
+        focus: "Name your one guiding quality out loud and walk with it."
+      },
+      {
+        line: "What is one small thing you can finish today that would make tomorrow lighter?",
+        sub: "Big visions are built from tiny completions. Choose one piece, and give it your focus.",
+        focus: "Intend to complete one thing fully rather than many things halfway."
+      },
+      {
+        line: "Whose life can you make even 1% softer today?",
+        sub: "A text, a smile, a patient pause, a prayer. Intention turns small gestures into sacred ones.",
+        focus: "Carry the intention to quietly bless at least one person today."
+      }
+    ],
+    blessing: [
+      {
+        line: "May your steps today be guided away from what drains you and toward what quietly sustains you.",
+        sub: "You are allowed to outgrow what you once tolerated. Bless the path that is closing and the one that is opening.",
+        focus: "Bless your own ability to choose differently than before."
+      },
+      {
+        line: "May what is heavy become shareable, and what is confusing become clearer as you move.",
+        sub: "You do not have to understand everything before you begin. Light often arrives one step at a time.",
+        focus: "Lay the day in the hands of the One who already sees its end."
+      },
+      {
+        line: "May you remember that being loved is not something you have to earn with productivity.",
+        sub: "Your worth is older than every to-do list. Let that truth sit at the base of your spine as you stand up.",
+        focus: "Let your first success of the day be simply receiving breath and love."
+      }
+    ]
+  };
+
+  let currentTab = "centering";
+
+  const tabs      = document.querySelectorAll(".mg-tab");
+  const cardTitle = document.getElementById("mgCardTitle");
+  const cardLine  = document.getElementById("mgCardLine");
+  const cardSub   = document.getElementById("mgCardSub");
+  const focusLine = document.getElementById("mgFocusLine");
+  const nextBtn   = document.getElementById("mgNextBtn");
+
+  if(!tabs.length || !cardLine || !cardSub || !focusLine || !nextBtn) return;
+
+  function pickRandom(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+  }
+
+  function renderCard(tab){
+    const pool = deck[tab] || deck.centering;
+    const entry = pickRandom(pool);
+    cardTitle.textContent = tab.charAt(0).toUpperCase() + tab.slice(1);
+    cardLine.textContent  = entry.line;
+    cardSub.textContent   = entry.sub;
+    focusLine.textContent = entry.focus || "One simple intention for the next few hours.";
+  }
+
+  tabs.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const tab = btn.getAttribute("data-tab");
+      if(!deck[tab]) return;
+      currentTab = tab;
+
+      tabs.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      renderCard(currentTab);
+    });
+  });
+
+  nextBtn.addEventListener("click",()=>{
+    renderCard(currentTab);
+  });
+
+  // initial render
+  renderCard(currentTab);
+})();
+
+/* 🌙 Evening Sanctum Logic */
+(function(){
+  const deck = {
+    reflection: [
+      {
+        line: "Where did you feel most like yourself today?",
+        sub: "Let your mind walk back over the day gently. Notice what felt aligned, not to judge the rest, but to learn what nourishes you.",
+        focus: "Remember one moment that felt true to who you are."
+      },
+      {
+        line: "What did today teach you about your limits?",
+        sub: "Limits are not failures, they are contours. They show you where to rest, where to ask for help, and where tomorrow can be lighter.",
+        focus: "Lay down the expectation that you must do everything alone."
+      },
+      {
+        line: "Where did you see even a small trace of mercy today?",
+        sub: "Mercy can look like a pause, a kind word, a near-miss, or a quiet comfort in your chest. Let yourself recognize it.",
+        focus: "Hold onto the one mercy you can name. Let the rest go."
+      }
+    ],
+    release: [
+      {
+        line: "What worry is circling your mind on repeat?",
+        sub: "Name it honestly. You do not have to solve it tonight. You are allowed to set it down for a few hours and rest.",
+        focus: "Lay down the belief that constant worry keeps you safe."
+      },
+      {
+        line: "Whose voice are you still arguing with in your head?",
+        sub: "The conversation is over for now. You are allowed to step out of the courtroom and back into your own room.",
+        focus: "Release the invisible arguments and let your nervous system exhale."
+      },
+      {
+        line: "What did you promise yourself you’d finish today… but didn’t?",
+        sub: "You are still worthy, still loved, still on your way. The work can continue tomorrow. Tonight belongs to your breath.",
+        focus: "Lay down perfection; keep only the intention to keep going."
+      }
+    ],
+    gratitude: [
+      {
+        line: "Name one small, almost forgettable kindness from today.",
+        sub: "A held door, a song you liked, warm water, a soft pillow. Gratitude does not need to be dramatic to be real.",
+        focus: "Let one tiny kindness be enough to soften the edges of your night."
+      },
+      {
+        line: "Who are you quietly grateful for right now?",
+        sub: "They may never know you are thinking of them, but your gratitude still reshapes the inner atmosphere of your heart.",
+        focus: "Hold their name gently and bless them in your own words."
+      },
+      {
+        line: "What stayed with you today instead of leaving?",
+        sub: "Maybe it was your breath, your body carrying you, a friendship, or faith that refused to let go. Notice what endured.",
+        focus: "Thank the One who kept you, even in the hours you felt alone."
+      }
+    ]
+  };
+
+  let currentTab = "reflection";
+
+  const tabs      = document.querySelectorAll(".es-tab");
+  const cardTitle = document.getElementById("esCardTitle");
+  const cardLine  = document.getElementById("esCardLine");
+  const cardSub   = document.getElementById("esCardSub");
+  const focusLine = document.getElementById("esFocusLine");
+  const nextBtn   = document.getElementById("esNextBtn");
+
+  if(!tabs.length || !cardLine || !cardSub || !focusLine || !nextBtn) return;
+
+  function pickRandom(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+  }
+
+  function renderCard(tab){
+    const pool = deck[tab] || deck.reflection;
+    const entry = pickRandom(pool);
+    cardTitle.textContent = tab.charAt(0).toUpperCase() + tab.slice(1);
+    cardLine.textContent  = entry.line;
+    cardSub.textContent   = entry.sub;
+    focusLine.textContent = entry.focus || "One thought you don’t need to carry into sleep.";
+  }
+
+  tabs.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const tab = btn.getAttribute("data-tab");
+      if(!deck[tab]) return;
+      currentTab = tab;
+
+      tabs.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      renderCard(currentTab);
+    });
+  });
+
+  nextBtn.addEventListener("click",()=>{
+    renderCard(currentTab);
+  });
+
+  // initial render
+  renderCard(currentTab);
+})();
+</script>
