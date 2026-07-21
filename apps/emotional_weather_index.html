@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Emotional Weather — Sacred Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Sacred, soft parchment + gold (Autumn-friendly) */
+    --bg-a:#fbf7f2;
+    --bg-b:#f2ede6;
+    --card:rgba(255,255,255,0.78);
+    --card-2:rgba(255,255,255,0.62);
+    --ink:#221f1b;
+    --muted:#6f6256;
+
+    --gold:#d9b878;
+    --gold-deep:#b89252;
+
+    --accent:#7c6be8;          /* lavender */
+    --accent-soft:#d7d0ff;
+
+    /* sacred radii + spacing */
+    --r-33:33px;
+    --r-21:21px;
+    --r-14:14px;
+    --gap:11px;
+
+    --shadow:0 21px 55px rgba(0,0,0,0.10);
+    --shadow-soft:0 14px 36px rgba(0,0,0,0.08);
+
+    --btn-font:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    --title-font:'Cinzel',serif;
+  }
+
+  /* Midnight blue + silver (Thaeden-friendly) */
+  body.theme-midnight{
+    --bg-a:#07090f;
+    --bg-b:#0c0f1a;
+    --card:rgba(18,20,28,0.78);
+    --card-2:rgba(18,20,28,0.62);
+    --ink:#f4f2ec;
+    --muted:#a5aab6;
+
+    --gold:#b7c1d6;     /* silver */
+    --gold-deep:#7b879f;
+
+    --accent:#7dd3fc;
+    --accent-soft:#c7ecff;
+
+    --shadow:0 24px 70px rgba(0,0,0,0.55);
+    --shadow-soft:0 14px 36px rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--bg-a),var(--bg-b));
+    color:var(--ink);
+    font-family: 'Montserrat', system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .wrap{
+    width:100%;
+    max-width: 760px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid rgba(60,52,40,0.10);
+    border-radius:var(--r-33);
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(8px);
+    overflow:hidden;
+  }
+
+  .top{
+    padding:18px 16px 12px;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    justify-content:space-between;
+    border-bottom:1px solid rgba(60,52,40,0.08);
+  }
+
+  .brand{
+    min-width:0;
+  }
+
+  .brand h1{
+    margin:0;
+    font-family:var(--title-font);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-size:16px;
+    font-weight:600;
+  }
+
+  .brand p{
+    margin:8px 0 0;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.35;
+  }
+
+  .topActions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .pill{
+    border:none;
+    cursor:pointer;
+    padding:8px 10px;
+    border-radius:999px;
+    background: linear-gradient(120deg, rgba(255,255,255,0.72), rgba(255,255,255,0.45));
+    color:var(--ink);
+    font-family: var(--btn-font);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    border:1px solid rgba(60,52,40,0.12);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    box-shadow: var(--shadow-soft);
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.theme-midnight .pill{
+    background: linear-gradient(120deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+    border:1px solid rgba(255,255,255,0.10);
+  }
+  .pill:active{ transform: translateY(1px) scale(0.99); filter:brightness(0.98); }
+
+  .content{
+    padding:14px 14px 16px;
+    display:grid;
+    gap: var(--gap);
+  }
+
+  .prompt{
+    text-align:center;
+    padding: 10px 12px;
+    border-radius:var(--r-21);
+    background: var(--card-2);
+    border:1px solid rgba(60,52,40,0.08);
+  }
+  .prompt .q{
+    font-family: var(--title-font);
+    letter-spacing:0.10em;
+    text-transform:uppercase;
+    font-size:12px;
+    margin:0;
+  }
+  .prompt .softline{
+    margin:8px 0 0;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.4;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(5, minmax(0,1fr));
+    gap: 9px;
+  }
+  @media (max-width:560px){
+    .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+  }
+
+  .weatherBtn{
+    border:none;
+    cursor:pointer;
+    border-radius: var(--r-21);
+    padding: 10px 10px;
+    min-height: 56px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
+    border:1px solid rgba(60,52,40,0.10);
+    box-shadow: var(--shadow-soft);
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    transition: transform .15s ease, box-shadow .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.theme-midnight .weatherBtn{
+    background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+    border:1px solid rgba(255,255,255,0.10);
+  }
+  .weatherBtn:active{ transform: translateY(1px) scale(0.99); }
+  .weatherBtn[aria-pressed="true"]{
+    outline: 2px solid rgba(0,0,0,0.06);
+    box-shadow: 0 18px 44px rgba(0,0,0,0.14);
+  }
+  body.theme-midnight .weatherBtn[aria-pressed="true"]{
+    outline: 2px solid rgba(255,255,255,0.10);
+  }
+
+  .wEmoji{font-size:18px}
+  .wLabel{
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+
+  .panel{
+    background: var(--card-2);
+    border:1px solid rgba(60,52,40,0.10);
+    border-radius: var(--r-33);
+    padding: 12px;
+    box-shadow: var(--shadow-soft);
+  }
+  body.theme-midnight .panel{ border:1px solid rgba(255,255,255,0.10); }
+
+  .row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+
+  .kpi{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width: 220px;
+  }
+  .kpi .t{
+    font-family: var(--title-font);
+    letter-spacing:0.10em;
+    text-transform:uppercase;
+    font-size:12px;
+    margin:0;
+  }
+  .kpi .s{
+    margin:0;
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.35;
+  }
+
+  .sliderWrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width: 320px;
+    max-width:100%;
+    justify-content:flex-end;
+  }
+  .sliderWrap label{
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  input[type="range"]{
+    width: 200px;
+    max-width: 100%;
+    accent-color: var(--accent);
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(60,52,40,0.12);
+    background: rgba(255,255,255,0.70);
+    font-size:11px;
+    letter-spacing:0.10em;
+    text-transform:uppercase;
+    color: var(--ink);
+    min-width: 66px;
+  }
+  body.theme-midnight .badge{
+    border:1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .canvasWrap{
+    padding:10px;
+    border-radius: var(--r-33);
+    background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.35));
+    border:1px solid rgba(60,52,40,0.10);
+    box-shadow: var(--shadow-soft);
+  }
+  body.theme-midnight .canvasWrap{
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    border:1px solid rgba(255,255,255,0.10);
+  }
+
+  canvas{
+    width:100%;
+    height: 260px;
+    display:block;
+    border-radius: var(--r-21);
+    background: rgba(0,0,0,0.04);
+  }
+  body.theme-midnight canvas{ background: rgba(0,0,0,0.45); }
+
+  .reflect{
+    display:grid;
+    gap:10px;
+  }
+
+  .quote{
+    font-size:14px;
+    line-height:1.55;
+    margin:0;
+  }
+  .quote strong{
+    color: var(--gold-deep);
+    font-weight:700;
+  }
+  body.theme-midnight .quote strong{ color: var(--gold); }
+
+  .journal{
+    width:100%;
+    border-radius: var(--r-21);
+    border:1px solid rgba(60,52,40,0.12);
+    background: rgba(255,255,255,0.72);
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height:1.45;
+    color: var(--ink);
+    outline:none;
+    resize: vertical;
+    min-height: 72px;
+  }
+  body.theme-midnight .journal{
+    border:1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: var(--ink);
+  }
+
+  .buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .cta{
+    border:none;
+    cursor:pointer;
+    padding:10px 12px;
+    border-radius: 999px;
+    font-family: var(--btn-font);
+    font-size: 11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color: #fff;
+    background: linear-gradient(120deg, var(--accent), var(--accent-soft));
+    box-shadow: var(--shadow-soft);
+    transition: transform .15s ease, filter .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    white-space:nowrap;
+  }
+  .cta:active{ transform: translateY(1px) scale(0.99); filter:brightness(0.98); }
+
+  .cta.ghost{
+    background: transparent;
+    color: var(--ink);
+    border:1px solid rgba(60,52,40,0.14);
+  }
+  body.theme-midnight .cta.ghost{
+    color: var(--ink);
+    border:1px solid rgba(255,255,255,0.14);
+  }
+
+  .toast{
+    text-align:center;
+    color: var(--muted);
+    font-size: 12px;
+    min-height: 18px;
+  }
+
+  .miniLog{
+    display:grid;
+    gap:8px;
+  }
+
+  .logHead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .logHead .lbl{
+    font-family: var(--title-font);
+    letter-spacing:0.10em;
+    text-transform:uppercase;
+    font-size: 12px;
+    margin:0;
+  }
+  .logHead .sub{
+    color: var(--muted);
+    font-size: 12px;
+    margin:0;
+  }
+
+  .logList{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height: 200px;
+    overflow:auto;
+    padding-right: 4px;
+  }
+
+  .entry{
+    border-radius: var(--r-21);
+    padding:10px 12px;
+    background: rgba(255,255,255,0.70);
+    border:1px solid rgba(60,52,40,0.10);
+  }
+  body.theme-midnight .entry{
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.10);
+  }
+  .entry .meta{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:6px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .entry .txt{
+    font-size: 13px;
+    line-height: 1.45;
+    margin:0;
+  }
+
+  .footerNote{
+    text-align:center;
+    padding: 10px 12px 14px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height:1.35;
+  }
+</style>
+</head>
+<body class="theme-parchment">
+<div class="wrap">
+  <div class="card" role="application" aria-label="Emotional Weather">
+    <div class="top">
+      <div class="brand">
+        <h1>Emotional Weather</h1>
+        <p>Not fixing. Not judging. Just noticing — gently, in the present moment.</p>
+      </div>
+      <div class="topActions">
+        <button class="pill" id="themeBtn" title="Switch theme">🌙 Theme</button>
+        <button class="pill" id="soundBtn" title="Atmosphere sound (off by default)">🔈 Sound: Off</button>
+        <button class="pill" id="newBlessingBtn" title="New reflection">✨ New</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="prompt">
+        <p class="q">What is the weather inside you right now?</p>
+        <p class="softline">Choose one. Then let it be true for a moment.</p>
+      </div>
+
+      <div class="grid" id="weatherGrid" aria-label="Weather choices"></div>
+
+      <div class="panel">
+        <div class="row">
+          <div class="kpi">
+            <p class="t" id="nowTitle">Choose a weather</p>
+            <p class="s" id="nowSub">Then adjust intensity (1–5). You can seal an entry to your local log.</p>
+          </div>
+
+          <div class="sliderWrap" aria-label="Intensity controls">
+            <label for="intensity">Intensity</label>
+            <input id="intensity" type="range" min="1" max="5" value="3" />
+            <div class="badge" id="intensityBadge">3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="canvasWrap">
+        <canvas id="scene" aria-label="Weather scene"></canvas>
+      </div>
+
+      <div class="panel reflect">
+        <p class="quote" id="reflectionText">
+          <strong>Begin:</strong> Select a weather tile to receive a gentle reflection.
+        </p>
+
+        <textarea class="journal" id="journal" placeholder="Optional: one gentle truth you want to hold (saved locally only)…"></textarea>
+
+        <div class="buttons">
+          <button class="cta" id="sealBtn">Seal This Moment</button>
+          <button class="cta ghost" id="clearTextBtn">Clear Text</button>
+          <button class="cta ghost" id="exportBtn">Export Log (JSON)</button>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="panel miniLog">
+        <div class="logHead">
+          <div>
+            <p class="lbl">Your Local Weather Log</p>
+            <p class="sub">Stored only in this browser (sovereign localStorage).</p>
+          </div>
+          <button class="pill" id="clearLogBtn" title="Clear log (you only)">Clear Log</button>
+        </div>
+        <div class="logList" id="logList" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="footerNote">
+      Sacred Note: This is not medical advice. If you feel unsafe, consider reaching out to a trusted person or professional support.
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* =========================
+     STORAGE
+     ========================= */
+  const K = {
+    LOG: "vv_emotional_weather_log_v2",
+    PREFS: "vv_emotional_weather_prefs_v2"
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const scene = $("scene");
+  const ctx = scene.getContext("2d");
+
+  const weatherGrid = $("weatherGrid");
+  const intensity = $("intensity");
+  const intensityBadge = $("intensityBadge");
+  const nowTitle = $("nowTitle");
+  const nowSub = $("nowSub");
+  const reflectionText = $("reflectionText");
+  const journal = $("journal");
+  const toast = $("toast");
+
+  const themeBtn = $("themeBtn");
+  const soundBtn = $("soundBtn");
+  const newBlessingBtn = $("newBlessingBtn");
+  const sealBtn = $("sealBtn");
+  const clearTextBtn = $("clearTextBtn");
+  const exportBtn = $("exportBtn");
+  const clearLogBtn = $("clearLogBtn");
+  const logList = $("logList");
+
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const nowISO = () => new Date().toISOString();
+
+  function safeJSON(key, fallback){
+    try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+    catch { return fallback; }
+  }
+  function setJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+  /* =========================
+     WEATHER DEFINITIONS
+     ========================= */
+  const WEATHER = [
+    { id:"fog",   emoji:"☁️", label:"Foggy"  },
+    { id:"storm", emoji:"🌧️", label:"Stormy" },
+    { id:"wind",  emoji:"🌬️", label:"Windy"  },
+    { id:"calm",  emoji:"🌊", label:"Calm"   },
+    { id:"clear", emoji:"☀️", label:"Clear"  }
+  ];
+
+  const REFLECTIONS = {
+    fog: [
+      "It’s okay if you can’t see far ahead. Your next gentle step is enough.",
+      "Fog is not failure. It’s the world asking you to move slowly and kindly.",
+      "When things feel unclear, return to what is simple: breath, body, now.",
+      "You don’t have to force certainty. Let clarity arrive like morning.",
+      "Even in fog, your inner compass still works."
+    ],
+    storm: [
+      "A storm is energy moving. You are allowed to feel it without becoming it.",
+      "If the wind is loud inside you, choose one small sheltering action.",
+      "Strong feelings can be holy weather. Breathe and let the sky pass through.",
+      "You are not too much. You are human, and the storm will shift.",
+      "Hold steady: soften the jaw, lower the shoulders, keep your breath slow."
+    ],
+    wind: [
+      "Wind means change. Something is rearranging — make room without panic.",
+      "You can be moved and still be safe. Root down through your feet.",
+      "Let the wind carry what’s done. Keep what matters.",
+      "Even scattered thoughts can be gathered by one slow inhale.",
+      "You don’t have to chase every gust. Pick one direction: kindness."
+    ],
+    calm: [
+      "Calm is a skill you’re practicing, not a mood you must earn.",
+      "Let the quiet be real. You don’t need to fill it.",
+      "In calm water, you can hear what you truly need.",
+      "Rest is productive in the language of the soul.",
+      "Breathe like you trust the world for ten seconds."
+    ],
+    clear: [
+      "Clarity is a sunrise. Enjoy it without demanding it last forever.",
+      "When things feel clear, choose one true action and take it gently.",
+      "Let your mind be simple today: one task, one breath, one kindness.",
+      "Clear skies don’t erase your hard days — they honor your endurance.",
+      "This is a good moment to bless your own effort."
+    ]
+  };
+
+  const CARE_SUGGESTIONS = {
+    fog: [
+      "Drink water. Name one thing you can do in 5 minutes.",
+      "Open a window or change rooms for a small reset.",
+      "Write one sentence: “Right now I need…”"
+    ],
+    storm: [
+      "Unclench your hands. Exhale longer than you inhale.",
+      "Step outside for 60 seconds if possible.",
+      "Text one safe person: “I’m having a hard moment.”"
+    ],
+    wind: [
+      "Put both feet on the floor and press gently down.",
+      "Make a tiny list: Keep / Release / Later.",
+      "Slow your movements for 2 minutes."
+    ],
+    calm: [
+      "Protect the calm: do one nourishing thing before more inputs.",
+      "Stretch your neck and shoulders slowly.",
+      "Say: “I’m allowed to be okay.”"
+    ],
+    clear: [
+      "Choose one meaningful task and do just the first step.",
+      "Write a gratitude note (even one line).",
+      "Take a short walk and notice colors."
+    ]
+  };
+
+  /* =========================
+     STATE
+     ========================= */
+  const prefs = safeJSON(K.PREFS, { theme:"parchment", sound:false });
+  let mode = null;
+  let I = 3;
+
+  let log = safeJSON(K.LOG, []);
+  if(!Array.isArray(log)) log = [];
+
+  /* =========================
+     UI BUILD
+     ========================= */
+  function setToast(text){
+    toast.textContent = text || "";
+    if(text){
+      clearTimeout(setToast._t);
+      setToast._t = setTimeout(()=> toast.textContent = "", 2400);
+    }
+  }
+
+  function setTheme(theme){
+    document.body.classList.toggle("theme-midnight", theme === "midnight");
+    prefs.theme = theme;
+    setJSON(K.PREFS, prefs);
+  }
+
+  function updateSoundLabel(){
+    soundBtn.textContent = prefs.sound ? "🔈 Sound: On" : "🔈 Sound: Off";
+  }
+
+  function renderWeatherButtons(){
+    weatherGrid.innerHTML = "";
+    WEATHER.forEach(w => {
+      const b = document.createElement("button");
+      b.className = "weatherBtn";
+      b.type = "button";
+      b.dataset.id = w.id;
+      b.setAttribute("aria-pressed", "false");
+      b.innerHTML = `<div class="wEmoji">${w.emoji}</div><div class="wLabel">${w.label}</div>`;
+      b.addEventListener("click", () => selectWeather(w.id));
+      weatherGrid.appendChild(b);
+    });
+  }
+
+  function setPressed(id){
+    [...weatherGrid.querySelectorAll(".weatherBtn")].forEach(btn=>{
+      const on = btn.dataset.id === id;
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function refreshHeader(){
+    if(!mode){
+      nowTitle.textContent = "Choose a weather";
+      nowSub.textContent = "Then adjust intensity (1–5). You can seal an entry to your local log.";
+      return;
+    }
+    const w = WEATHER.find(x=>x.id===mode);
+    const care = pick(CARE_SUGGESTIONS[mode]);
+    nowTitle.textContent = `${w.emoji} ${w.label} · Intensity ${I}`;
+    nowSub.textContent = `Suggested care: ${care}`;
+  }
+
+  function newReflection(){
+    if(!mode){
+      reflectionText.innerHTML = `<strong>Begin:</strong> Select a weather tile to receive a gentle reflection.`;
+      return;
+    }
+    const line = pick(REFLECTIONS[mode]);
+    reflectionText.innerHTML = `<strong>${modeLabel(mode)}:</strong> ${escapeHtml(line)}`;
+  }
+
+  function modeLabel(id){
+    const w = WEATHER.find(x=>x.id===id);
+    return w ? w.label : "Weather";
+  }
+
+  function escapeHtml(s=""){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;");
+  }
+
+  /* =========================
+     CANVAS RESIZE (NO HIDDEN BUG)
+     ========================= */
+  function resizeCanvas(){
+    // Fit to the displayed CSS size * devicePixelRatio for crispness
+    const rect = scene.getBoundingClientRect();
+    const dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+    scene.width = Math.floor(rect.width * dpr);
+    scene.height = Math.floor(rect.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0); // draw in CSS pixels
+  }
+
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+  });
+
+  /* =========================
+     PARTICLE SYSTEMS (NO FLICKER)
+     ========================= */
+  const R = {
+    t: 0,
+    fog: [],
+    rain: [],
+    wind: [],
+    spark: [],
+    calm: { phase: 0 }
+  };
+
+  function initParticles(){
+    const rect = scene.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+
+    // Fog blobs
+    R.fog = Array.from({length: 9}, (_,i)=>({
+      x: Math.random()*W,
+      y: H*0.25 + Math.random()*H*0.5,
+      r: 60 + Math.random()*90,
+      vx: (0.15 + Math.random()*0.25) * (Math.random()<0.5?-1:1),
+      seed: Math.random()*999
+    }));
+
+    // Rain
+    R.rain = Array.from({length: 160}, ()=>({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      l: 6 + Math.random()*10,
+      vy: 2 + Math.random()*4
+    }));
+
+    // Wind strokes (as moving offset lines)
+    R.wind = Array.from({length: 7}, (_,i)=>({
+      y: 36 + i*(H-72)/6,
+      phase: Math.random()*Math.PI*2
+    }));
+
+    // Clear sparkles
+    R.spark = Array.from({length: 50}, ()=>({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      r: 1 + Math.random()*2.2,
+      a: 0.2 + Math.random()*0.5,
+      tw: 0.02 + Math.random()*0.03
+    }));
+
+    // Calm
+    R.calm.phase = Math.random()*Math.PI*2;
+  }
+
+  /* =========================
+     AUDIO (OPTIONAL)
+     ========================= */
+  let audio = {
+    ctx: null,
+    master: null,
+    nodes: [],
+    running: false
+  };
+
+  function ensureAudio(){
+    if(audio.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    audio.ctx = new AC();
+    audio.master = audio.ctx.createGain();
+    audio.master.gain.value = 0.0;
+    audio.master.connect(audio.ctx.destination);
+  }
+
+  function stopAudio(){
+    if(!audio.ctx) return;
+    audio.nodes.forEach(n=>{
+      try { n.stop && n.stop(); } catch {}
+      try { n.disconnect && n.disconnect(); } catch {}
+    });
+    audio.nodes = [];
+    audio.running = false;
+    if(audio.master) audio.master.gain.setTargetAtTime(0.0, audio.ctx.currentTime, 0.04);
+  }
+
+  function startAudioForMode(){
+    ensureAudio();
+    if(!audio.ctx || !audio.master) return;
+
+    stopAudio();
+    audio.running = true;
+
+    // gentle volume
+    audio.master.gain.setTargetAtTime(0.12, audio.ctx.currentTime, 0.08);
+
+    const t0 = audio.ctx.currentTime;
+
+    function add(node){ audio.nodes.push(node); return node; }
+
+    // simple noise generator
+    function noiseBuffer(){
+      const len = audio.ctx.sampleRate * 1.2;
+      const buf = audio.ctx.createBuffer(1, len, audio.ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for(let i=0;i<len;i++) data[i] = (Math.random()*2-1) * 0.35;
+      return buf;
+    }
+
+    if(mode === "fog"){
+      const osc = add(audio.ctx.createOscillator());
+      const g = add(audio.ctx.createGain());
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(110, t0);
+      g.gain.setValueAtTime(0.0, t0);
+      g.gain.linearRampToValueAtTime(0.7, t0 + 0.6);
+      osc.connect(g).connect(audio.master);
+      osc.start();
+    }
+
+    if(mode === "storm"){
+      const src = add(audio.ctx.createBufferSource());
+      src.buffer = noiseBuffer();
+      src.loop = true;
+
+      const hp = add(audio.ctx.createBiquadFilter());
+      hp.type = "highpass"; hp.frequency.value = 450;
+
+      const g = add(audio.ctx.createGain());
+      g.gain.value = 0.45;
+
+      src.connect(hp).connect(g).connect(audio.master);
+      src.start();
+    }
+
+    if(mode === "wind"){
+      const src = add(audio.ctx.createBufferSource());
+      src.buffer = noiseBuffer();
+      src.loop = true;
+
+      const bp = add(audio.ctx.createBiquadFilter());
+      bp.type = "bandpass"; bp.frequency.value = 850; bp.Q.value = 0.7;
+
+      const g = add(audio.ctx.createGain());
+      g.gain.value = 0.35;
+
+      src.connect(bp).connect(g).connect(audio.master);
+      src.start();
+    }
+
+    if(mode === "calm"){
+      const osc = add(audio.ctx.createOscillator());
+      const lfo = add(audio.ctx.createOscillator());
+      const g = add(audio.ctx.createGain());
+
+      osc.type = "sine";
+      osc.frequency.value = 220;
+
+      lfo.type = "sine";
+      lfo.frequency.value = 0.12;
+
+      const lfoGain = add(audio.ctx.createGain());
+      lfoGain.gain.value = 28;
+
+      lfo.connect(lfoGain).connect(osc.frequency);
+      g.gain.value = 0.45;
+
+      osc.connect(g).connect(audio.master);
+      lfo.start();
+      osc.start();
+    }
+
+    if(mode === "clear"){
+      const osc = add(audio.ctx.createOscillator());
+      const g = add(audio.ctx.createGain());
+      osc.type = "triangle";
+      osc.frequency.value = 330;
+      g.gain.value = 0.25;
+      osc.connect(g).connect(audio.master);
+      osc.start();
+    }
+  }
+
+  function setSound(on){
+    prefs.sound = !!on;
+    setJSON(K.PREFS, prefs);
+    updateSoundLabel();
+
+    if(!prefs.sound){
+      stopAudio();
+      setToast("Sound off.");
+      return;
+    }
+    // user gesture required: resume if suspended
+    ensureAudio();
+    if(audio.ctx && audio.ctx.state === "suspended"){
+      audio.ctx.resume().catch(()=>{});
+    }
+    if(mode) startAudioForMode();
+    setToast("Sound on.");
+  }
+
+  /* =========================
+     DRAWING (FADE TRANSITIONS)
+     ========================= */
+  let anim = {
+    raf: null,
+    last: 0,
+    fade: 1,
+    targetFade: 1,
+    prevMode: null
+  };
+
+  function setMode(newMode){
+    if(newMode === mode) return;
+    anim.prevMode = mode;
+    mode = newMode;
+
+    // begin fade transition
+    anim.fade = 0;
+    anim.targetFade = 1;
+
+    setPressed(mode);
+    refreshHeader();
+    newReflection();
+
+    if(prefs.sound) startAudioForMode();
+  }
+
+  function selectWeather(id){
+    setMode(id);
+    setToast(`Selected ${modeLabel(id)}.`);
+  }
+
+  function palette(){
+    // Return colors based on theme and mode, lightly
+    const isMidnight = document.body.classList.contains("theme-midnight");
+    if(isMidnight){
+      return {
+        bg: "rgba(0,0,0,0.18)",
+        ink: "rgba(255,255,255,0.85)",
+        fog: "rgba(255,255,255,0.06)",
+        rain: "rgba(180,210,255,0.22)",
+        wind: "rgba(210,230,255,0.35)",
+        calm: "rgba(125,211,252,0.45)",
+        spark: "rgba(255,255,255,0.35)",
+        accent: "rgba(125,211,252,0.35)"
+      };
+    }
+    return {
+      bg: "rgba(255,255,255,0.35)",
+      ink: "rgba(40,35,30,0.85)",
+      fog: "rgba(255,255,255,0.08)",
+      rain: "rgba(120,170,255,0.16)",
+      wind: "rgba(110,120,160,0.22)",
+      calm: "rgba(124,107,232,0.22)",
+      spark: "rgba(124,107,232,0.16)",
+      accent: "rgba(185,146,82,0.22)"
+    };
+  }
+
+  function draw(delta){
+    const rect = scene.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const P = palette();
+
+    // background wash
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = P.bg;
+    ctx.fillRect(0,0,W,H);
+
+    // intensity multipliers
+    const fogD = I * 0.9;
+    const stormD = I * 0.9;
+    const windD = I * 0.9;
+    const calmD = I * 0.9;
+    const clearD = I * 0.9;
+
+    // subtle vignette
+    const g = ctx.createRadialGradient(W/2,H/2, 30, W/2,H/2, Math.max(W,H)/1.1);
+    g.addColorStop(0, "rgba(0,0,0,0.00)");
+    g.addColorStop(1, document.body.classList.contains("theme-midnight") ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.08)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+
+    if(!mode){
+      // idle shimmer
+      ctx.fillStyle = P.accent;
+      for(let i=0;i<14;i++){
+        const x = (Math.sin((R.t/70)+i)*0.5+0.5)*W;
+        const y = (Math.cos((R.t/90)+i)*0.5+0.5)*H;
+        ctx.beginPath();
+        ctx.arc(x,y, 1.5 + (i%3)*0.4, 0, Math.PI*2);
+        ctx.fill();
+      }
+      return;
+    }
+
+    // fade in effect
+    const alpha = clamp(anim.fade, 0, 1);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    if(mode === "fog"){
+      ctx.fillStyle = P.fog;
+      R.fog.forEach((b, i)=>{
+        b.x += b.vx * (0.6 + fogD*0.22);
+        if(b.x < -b.r) b.x = W + b.r;
+        if(b.x > W + b.r) b.x = -b.r;
+
+        const y = b.y + Math.sin((R.t/60)+b.seed) * (6 + fogD*3);
+        const r = b.r * (0.85 + fogD*0.06);
+        ctx.beginPath();
+        ctx.arc(b.x, y, r, 0, Math.PI*2);
+        ctx.fill();
+      });
+    }
+
+    if(mode === "storm"){
+      // dim wash
+      ctx.fillStyle = "rgba(0,0,0," + (document.body.classList.contains("theme-midnight") ? "0.22" : "0.08") + ")";
+      ctx.fillRect(0,0,W,H);
+
+      // rain
+      ctx.strokeStyle = P.rain;
+      ctx.lineWidth = 1.4;
+      const speed = 2.4 + stormD*1.2;
+      const count = Math.floor(R.rain.length * (0.45 + stormD*0.13));
+      for(let i=0;i<count;i++){
+        const d = R.rain[i];
+        d.y += d.vy * speed;
+        d.x += 0.2 * speed;
+        if(d.y > H+20){ d.y = -20; d.x = Math.random()*W; }
+        ctx.beginPath();
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x + 2, d.y + d.l*(0.9 + stormD*0.15));
+        ctx.stroke();
+      }
+
+      // occasional lightning (soft)
+      const flashChance = 0.002 + stormD*0.0015;
+      if(Math.random() < flashChance){
+        ctx.fillStyle = "rgba(255,255,255," + (0.10 + stormD*0.05) + ")";
+        ctx.fillRect(0,0,W,H);
+      }
+    }
+
+    if(mode === "wind"){
+      ctx.strokeStyle = P.wind;
+      ctx.lineWidth = 2;
+      const drift = (0.6 + windD*0.18);
+      R.wind.forEach((w)=>{
+        w.phase += 0.015 * drift;
+        ctx.beginPath();
+        const y = w.y + Math.sin(w.phase) * (6 + windD*3);
+        ctx.moveTo(0, y);
+        ctx.bezierCurveTo(
+          W*0.33, y - (10 + windD*5),
+          W*0.66, y + (10 + windD*5),
+          W, y
+        );
+        ctx.stroke();
+      });
+    }
+
+    if(mode === "calm"){
+      // gentle ripples
+      const base = 42 + calmD*8;
+      const amp  = 10 + calmD*4;
+      R.calm.phase += 0.012 * (0.7 + calmD*0.12);
+
+      const cx = W/2, cy = H/2;
+      for(let i=0;i<4;i++){
+        const r = base + i*22 + Math.sin(R.calm.phase + i*0.8) * amp;
+        ctx.strokeStyle = P.calm;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI*2);
+        ctx.stroke();
+      }
+    }
+
+    if(mode === "clear"){
+      // slow twinkling
+      const count = Math.floor(R.spark.length * (0.45 + clearD*0.12));
+      for(let i=0;i<count;i++){
+        const s = R.spark[i];
+        s.a += s.tw * (0.6 + clearD*0.2);
+        const a = 0.12 + (Math.sin(s.a)*0.5+0.5) * (0.22 + clearD*0.06);
+        ctx.fillStyle = P.spark.replace("0.35", String(a)).replace("0.16", String(a));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r*(0.9 + clearD*0.05), 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function loop(ts){
+    if(!anim.last) anim.last = ts;
+    const delta = (ts - anim.last) / 1000;
+    anim.last = ts;
+
+    R.t++;
+
+    // fade in progression
+    anim.fade = clamp(anim.fade + 0.06, 0, 1);
+
+    draw(delta);
+    anim.raf = requestAnimationFrame(loop);
+  }
+
+  /* =========================
+     LOG
+     ========================= */
+  function renderLog(){
+    if(!log.length){
+      logList.innerHTML = `<div class="entry"><div class="meta"><span>Nothing saved yet.</span><span>✨</span></div><p class="txt">When you “Seal This Moment,” it will appear here.</p></div>`;
+      return;
+    }
+    const items = log.slice().reverse().slice(0, 33);
+    logList.innerHTML = "";
+    items.forEach(item=>{
+      const el = document.createElement("div");
+      el.className = "entry";
+      const w = WEATHER.find(x=>x.id===item.mode);
+      const when = new Date(item.ts).toLocaleString();
+      el.innerHTML = `
+        <div class="meta">
+          <span>${w ? w.emoji + " " + w.label : "Weather"} · Intensity ${item.intensity}</span>
+          <span>${when}</span>
+        </div>
+        <p class="txt">${escapeHtml(item.reflection || "")}${item.note ? "<br><br><em>" + escapeHtml(item.note) + "</em>" : ""}</p>
+      `;
+      logList.appendChild(el);
+    });
+  }
+
+  function sealEntry(){
+    if(!mode){
+      setToast("Choose a weather first.");
+      return;
+    }
+    const chosen = modeLabel(mode);
+    const refl = stripHtml(reflectionText.innerHTML);
+    const note = journal.value.trim();
+
+    const entry = {
+      ts: nowISO(),
+      mode,
+      intensity: I,
+      reflection: refl.replace(/^.*?:\s*/, ""), // remove "Label:" if present
+      note
+    };
+
+    log.push(entry);
+    setJSON(K.LOG, log);
+
+    // gentle reward: clear note optionally
+    journal.value = "";
+    setToast(`Sealed: ${chosen}.`);
+    renderLog();
+  }
+
+  function stripHtml(html){
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return (div.textContent || div.innerText || "").trim();
+  }
+
+  function exportLog(){
+    const blob = new Blob([JSON.stringify(log, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `emotional_weather_log_${new Date().toISOString().slice(0,19).replaceAll(":","-")}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setToast("Exported JSON.");
+  }
+
+  function clearLog(){
+    if(!confirm("Clear your local weather log on THIS device/browser?")) return;
+    log = [];
+    setJSON(K.LOG, log);
+    renderLog();
+    setToast("Log cleared.");
+  }
+
+  /* =========================
+     EVENTS
+     ========================= */
+  intensity.addEventListener("input", () => {
+    I = Number(intensity.value || 3);
+    intensityBadge.textContent = String(I);
+    refreshHeader();
+  });
+
+  newBlessingBtn.addEventListener("click", () => {
+    newReflection();
+    setToast("New reflection.");
+  });
+
+  sealBtn.addEventListener("click", sealEntry);
+
+  clearTextBtn.addEventListener("click", () => {
+    journal.value = "";
+    setToast("Text cleared.");
+  });
+
+  exportBtn.addEventListener("click", exportLog);
+
+  clearLogBtn.addEventListener("click", clearLog);
+
+  themeBtn.addEventListener("click", () => {
+    const next = (prefs.theme === "midnight") ? "parchment" : "midnight";
+    setTheme(next);
+    // re-init particles to match canvas size in new rendering context
+    resizeCanvas();
+    initParticles();
+    setToast(next === "midnight" ? "Midnight theme." : "Parchment theme.");
+  });
+
+  soundBtn.addEventListener("click", () => {
+    setSound(!prefs.sound);
+  });
+
+  /* =========================
+     INIT
+     ========================= */
+  renderWeatherButtons();
+
+  // apply prefs
+  setTheme(prefs.theme);
+  updateSoundLabel();
+  intensityBadge.textContent = String(intensity.value || 3);
+
+  // canvas + particles
+  // important: resize after layout is visible
+  requestAnimationFrame(() => {
+    resizeCanvas();
+    initParticles();
+    renderLog();
+    requestAnimationFrame(loop);
+  });
+
+  // default reflection prompt
+  newReflection();
+
+  // click-to-select via keyboard (accessibility)
+  weatherGrid.addEventListener("keydown", (e)=>{
+    const btns = [...weatherGrid.querySelectorAll(".weatherBtn")];
+    const active = document.activeElement;
+    const idx = btns.indexOf(active);
+    if(idx === -1) return;
+
+    const cols = window.matchMedia("(max-width:560px)").matches ? 3 : 5;
+    let ni = idx;
+
+    if(e.key === "ArrowRight") ni = Math.min(btns.length-1, idx+1);
+    if(e.key === "ArrowLeft") ni = Math.max(0, idx-1);
+    if(e.key === "ArrowDown") ni = Math.min(btns.length-1, idx+cols);
+    if(e.key === "ArrowUp") ni = Math.max(0, idx-cols);
+    if(ni !== idx){
+      btns[ni].focus();
+      e.preventDefault();
+    }
+    if(e.key === "Enter" || e.key === " "){
+      active.click();
+      e.preventDefault();
+    }
+  });
+
+  function setPressedFromMode(){
+    if(!mode) return;
+    setPressed(mode);
+  }
+
+  function selectWeather(id){
+    setMode(id);
+    setPressedFromMode();
+  }
+
+  function setMode(newMode){
+  if(newMode === mode) return;
+
+  // remember where we came from (in case you want cross-fades later)
+  anim.prevMode = mode;
+
+  // update mode and restart fade-in
+  mode = newMode;
+  anim.fade = 0;
+
+  setPressed(mode);
+  refreshHeader();
+  newReflection();
+
+  if(prefs.sound) {
+    startAudioForMode();
+  }
+}
+
+
+})();
+</script>
+</body>
+</html>
