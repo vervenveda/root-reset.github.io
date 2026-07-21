@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> Daily Journal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style id="mainStyle">
+    body {
+      background: #f7f3eb;
+      color: #3d3730;
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0; min-height: 100vh;
+      display: flex; justify-content: center; align-items: flex-start;
+      transition: background .5s, color .4s;
+    }
+    .journal-container {
+      background: #fffaf7;
+      border-radius: 26px;
+      box-shadow: 0 10px 36px #d3c1a366, 0 2px 8px #0001;
+      max-width: 760px; width: 98vw;
+      padding: 38px 38px 26px 38px;
+      margin: 44px 0 22px 0;
+      border: 1.5px solid #e5dac3;
+      display: flex; flex-direction: column;
+      align-items: stretch;
+      position: relative;
+    }
+    .nightmode body {
+      background: #232428;
+      color: #e9e3d7;
+    }
+    .nightmode .journal-container {
+      background: #222226;
+      color: #e9e3d7;
+      box-shadow: 0 10px 36px #191a1f66, 0 2px 8px #0002;
+      border-color: #44484d;
+    }
+    .nightmode .section-content {
+      background: #232428;
+      color: #e3dacd;
+      border-color: #44484d;
+    }
+    .nightmode .section-content:focus {
+      background: #181a1e;
+      color: #fff;
+    }
+    .nightmode .toolbar button {
+      background: #252832; color: #eee;
+      border-color: #44484d;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: #8d826c;
+      text-align: center;
+      letter-spacing: 1.3px;
+    }
+    .top-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .date-label { font-size: 1.13em; color: #998d7e;}
+    .night-toggle {
+      cursor: pointer;
+      font-size: 1.1em;
+      color: #8d826c;
+      background: #e6e0d1;
+      border: none; border-radius: 13px;
+      padding: 7px 19px;
+      transition: background .18s;
+      margin-left: 13px;
+    }
+    .night-toggle:hover { background: #d7ceb5;}
+    .toolbar {
+      margin: 0 0 8px 0;
+      display: flex; gap: 6px;
+    }
+    .toolbar button {
+      font-size: 1em;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: 1px solid #ded2b8;
+      background: #f5f0e4;
+      color: #7c705c;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .13s;
+    }
+    .toolbar button:hover { background: #e2dbc6;}
+    .journal-section {
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15em;
+      margin-bottom: 3px;
+      color: #97875d;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+    }
+    .section-content {
+      min-height: 60px;
+      border-radius: 12px;
+      border: 1.5px solid #e5dac3;
+      background: #fffcf6;
+      color: #41392f;
+      padding: 14px 14px 10px 14px;
+      font-size: 1.06em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      resize: vertical;
+      margin-bottom: 2px;
+      outline: none;
+      transition: background 0.15s, color 0.13s;
+    }
+    .section-content:focus {
+      background: #fffbe9;
+      color: #3b2f24;
+      border-color: #c7b998;
+    }
+    .long-entry {
+      min-height: 180px; font-size: 1.09em;
+      background: #f5efde;
+    }
+    .actions {
+      display: flex; gap: 17px; justify-content: flex-end;
+      margin-top: 12px;
+    }
+    .save-btn, .export-btn, .print-btn {
+      padding: 10px 22px;
+      font-size: 1.04em;
+      border-radius: 8px;
+      border: none;
+      background: #ded2b8;
+      color: #605749;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+      margin-left: 3px;
+    }
+    .save-btn:hover { background: #bda86b; color: #fff; }
+    .export-btn { background: #d7e9e3; color: #466c5b;}
+    .export-btn:hover { background: #c5dccd; color: #1c372c;}
+    .print-btn { background: #b5d1f6; color: #365276; }
+    .print-btn:hover { background: #8fb8df; color: #22364e; }
+    .saved-note {
+      margin-top: 7px;
+      text-align: right;
+      color: #a18d6b;
+      font-size: 0.99em;
+      font-family: inherit;
+      opacity: 0; transition: opacity 0.7s;
+    }
+    .saved-note.visible { opacity: 1;}
+    .footer-note {
+      text-align: center;
+      font-size: 0.99em;
+      color: #b3aa95;
+      margin: 21px 0 0 0;
+      letter-spacing: .2px;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    @media print {
+      body, .journal-container { background: #fff !important; color: #222 !important; }
+      .night-toggle, .actions, .footer-note, .saved-note { display: none !important;}
+      .journal-container { box-shadow: none !important; border: none !important;}
+      .section-content[contenteditable] { border: none !important; background: #fff !important; }
+    }
+    @media (max-width: 800px) {
+      .journal-container { padding: 14px 4vw;}
+      h1 { font-size: 1.25rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="journal-container">
+    <div class="top-row">
+      <span class="date-label">
+        <label for="entryDate">Date</label>
+        <input id="entryDate" type="date"/>
+      </span>
+      <button class="night-toggle" id="nightToggle" title="Night mode">🌙 Night Mode</button>
+    </div>
+    <h1>Daily Journal</h1>
+    <div class="journal-section">
+      <label>1. Vision / Intention</label>
+      <div class="toolbar">
+        <button onclick="format('bold',this)">B</button>
+        <button onclick="format('italic',this)"><i>I</i></button>
+        <button onclick="format('underline',this)"><u>U</u></button>
+        <button onclick="format('insertUnorderedList',this)">• List</button>
+      </div>
+      <div class="section-content" id="vision" contenteditable="true" spellcheck="true" aria-label="Vision or intention"></div>
+    </div>
+    <div class="journal-section">
+      <label>2. Energy / Emotions</label>
+      <div class="toolbar">
+        <button onclick="format('bold',this)">B</button>
+        <button onclick="format('italic',this)"><i>I</i></button>
+        <button onclick="format('underline',this)"><u>U</u></button>
+        <button onclick="format('insertUnorderedList',this)">• List</button>
+      </div>
+      <div class="section-content" id="energy" contenteditable="true" spellcheck="true" aria-label="Emotions"></div>
+    </div>
+    <div class="journal-section">
+      <label>3. Visualizations</label>
+      <div class="toolbar">
+        <button onclick="format('bold',this)">B</button>
+        <button onclick="format('italic',this)"><i>I</i></button>
+        <button onclick="format('underline',this)"><u>U</u></button>
+        <button onclick="format('insertUnorderedList',this)">• List</button>
+      </div>
+      <div class="section-content" id="visuals" contenteditable="true" spellcheck="true" aria-label="Visualizations"></div>
+    </div>
+    <div class="journal-section">
+      <label>4. Goals / Actions</label>
+      <div class="toolbar">
+        <button onclick="format('bold',this)">B</button>
+        <button onclick="format('italic',this)"><i>I</i></button>
+        <button onclick="format('underline',this)"><u>U</u></button>
+        <button onclick="format('insertUnorderedList',this)">• List</button>
+      </div>
+      <div class="section-content" id="actions" contenteditable="true" spellcheck="true" aria-label="Goals or actions"></div>
+    </div>
+    <div class="journal-section">
+      <label>5. Gratitude</label>
+      <div class="toolbar">
+        <button onclick="format('bold',this)">B</button>
+        <button onclick="format('italic',this)"><i>I</i></button>
+        <button onclick="format('underline',this)"><u>U</u></button>
+        <button onclick="format('insertUnorderedList',this)">• List</button>
+      </div>
+      <div class="section-content" id="gratitude" contenteditable="true" spellcheck="true" aria-label="Gratitude"></div>
+    </div>
+    <div class="journal-section">
+      <label>6. Daily Diary</label>
+      <div class="toolbar">
+        <button onclick="format('bold',this)">B</button>
+        <button onclick="format('italic',this)"><i>I</i></button>
+        <button onclick="format('underline',this)"><u>U</u></button>
+        <button onclick="format('insertUnorderedList',this)">• List</button>
+      </div>
+      <div class="section-content long-entry" id="diary" contenteditable="true" spellcheck="true" aria-label="Diary"></div>
+    </div>
+
+    <div class="actions">
+      <button class="save-btn" id="saveBtn">Save</button>
+      <button class="export-btn" id="exportBtn">Export</button>
+      <button class="print-btn" id="printBtn">Print</button>
+    </div>
+    <div class="saved-note" id="savedNote">Saved!</div>
+    <div class="footer-note">
+      Entries are private and saved only in your browser.<br>
+      Khaemenes Academy &copy; 2025
+    </div>
+  </div>
+  <script>
+    // Rich text formatting toolbar
+    function format(cmd, btn) {
+      document.execCommand(cmd, false, null);
+      btn.blur();
+    }
+
+    // Date handling
+    const entryDate = document.getElementById('entryDate');
+    function todayISO() { return new Date().toISOString().slice(0,10); }
+    entryDate.value = todayISO();
+    entryDate.max = todayISO();
+
+    // Night mode
+    const nightToggle = document.getElementById("nightToggle");
+    nightToggle.onclick = function() {
+      document.body.classList.toggle("nightmode");
+      nightToggle.textContent = document.body.classList.contains("nightmode") ? "☀️ Day Mode" : "🌙 Night Mode";
+    };
+
+    // Section fields
+    const fields = ["vision","energy","visuals","actions","gratitude","diary"];
+    function getEntryKey(dateStr) { return "elegant_adult_journal_" + dateStr; }
+
+    // Save/load
+    function loadEntry(dateStr) {
+      const key = getEntryKey(dateStr);
+      const entry = JSON.parse(localStorage.getItem(key) || "{}");
+      fields.forEach(id => {
+        document.getElementById(id).innerHTML = entry[id] || "";
+      });
+    }
+    function saveEntry() {
+      const key = getEntryKey(entryDate.value);
+      const entry = {};
+      fields.forEach(id => {
+        entry[id] = document.getElementById(id).innerHTML;
+      });
+      localStorage.setItem(key, JSON.stringify(entry));
+      showSaved();
+    }
+    function showSaved() {
+      const savedNote = document.getElementById('savedNote');
+      savedNote.classList.add('visible');
+      setTimeout(()=>{ savedNote.classList.remove('visible'); }, 1200);
+    }
+    function exportAll() {
+      const dump = {};
+      for(let i=0; i<localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if(!key.startsWith("elegant_adult_journal_")) continue;
+        const date = key.slice("elegant_adult_journal_".length);
+        dump[date] = JSON.parse(localStorage.getItem(key));
+      }
+      const blob = new Blob([JSON.stringify(dump,null,2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "elegant_journal_export.json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+    }
+    // Print
+    document.getElementById("printBtn").onclick = () => { window.print(); };
+
+    // Event listeners
+    entryDate.addEventListener('change',()=>{loadEntry(entryDate.value);});
+    fields.forEach(id => {
+      document.getElementById(id).addEventListener('input', saveEntry);
+    });
+    document.getElementById('saveBtn').onclick = saveEntry;
+    document.getElementById('exportBtn').onclick = exportAll;
+
+    // Initial load
+    loadEntry(entryDate.value);
+  </script>
+</body>
+</html>
