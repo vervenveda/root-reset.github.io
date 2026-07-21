@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Letter to My Inner Self</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #181a1f;
+      color: #f0e7cb;
+      font-family: 'EB Garamond', serif;
+      margin: 0;
+      padding: 0;
+      min-height: 99vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      background: #242630cc;
+      border-radius: 17px;
+      margin: 28px 0 24px;
+      padding: 28px 15px 18px;
+      max-width: 277px;
+      width: 96vw;
+      box-shadow: 0 6px 32px #0006;
+    }
+    h1 {
+      text-align: center;
+      color: #ffffff;
+      font-size: 1.77em;
+      letter-spacing: 1px;
+      margin-bottom: 9px;
+    }
+    .intro {
+      text-align: center;
+      font-size: 1em;
+      color: #ffffff;
+      margin-bottom: 33px;
+      font-style: italic;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 222px;
+      font-family: inherit;
+      font-size: 1.5em;
+      border-radius: 11px;
+      background: #181a1f;
+      color: #ffffff;
+      border: 1.5px solid #bda672;
+      padding: 11px;
+      margin-bottom: 14px;
+      box-sizing: border-box;
+    }
+    .btn-row {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Base button styling for main controls */
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 1em;
+      font-family: inherit;
+      background: linear-gradient(90deg,#bda672 60%,#dbc89c 100%);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 500;
+      margin-bottom: 0;
+      flex: 1 1 45%;
+      min-width: 95px;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.18s, filter 0.18s;
+    }
+    button:hover {
+      filter: brightness(1.07);
+      background: linear-gradient(90deg,#dbc89c 20%,#bda672 100%);
+    }
+
+    /* Template button should stay small and inline, not flex */
+    .template-btn {
+      background: #bda672;
+      background-image: none;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: 0.95em;
+      cursor: pointer;
+      margin-top: 14px;
+      display: inline-block;
+      flex: none;
+      min-width: auto;
+      box-shadow: 0 1px 6px #0004;
+    }
+    .template-btn:hover {
+      filter: brightness(1.07);
+      background: #dbc89c;
+    }
+
+    .letters-list {
+      margin-top: 17px;
+      max-height: 160px;
+      overflow-y: auto;
+      background: #23232a;
+      border-radius: 9px;
+      padding: 7px;
+    }
+    .letter-entry {
+      margin-bottom: 11px;
+      background: #23232a;
+      border-radius: 8px;
+      padding: 9px 11px;
+      position: relative;
+      animation: fadeIn 0.2s;
+    }
+    .letter-date {
+      color: #ffffff;
+      font-size: 0.9em;
+      margin-bottom: 5px;
+      text-align: left;
+    }
+    .letter-body {
+      font-size: 1em;
+      color: #ffffff;
+      white-space: pre-line;
+    }
+    .actions {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      display: flex;
+      gap: 5px;
+    }
+    .actions button {
+      background: #4b4444;
+      color: #ffffff;
+      font-size: 0.84em;
+      padding: 4px 9px;
+      min-width: 0;
+      border-radius: 7px;
+      flex: 0 0 auto; /* don't stretch like main buttons */
+      box-shadow: none;
+      background-image: none;
+    }
+    .actions button:hover {
+      background: #bda672;
+      color: #ffffff;
+      filter: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width:277px) {
+      .container { padding: 13px 2vw 11px; }
+      h1 { font-size: 1.09em; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Letter to My Inner Self</h1>
+  <div class="intro">
+    Write a gentle letter to your deepest self each day.<br>
+    Let this be your private space for healing and encouragement.<br>
+    <button class="template-btn" type="button" onclick="fillTemplate()">Fill with Template</button>
+  </div>
+  <form id="letterForm" autocomplete="off">
+    <textarea id="letterInput" placeholder="Write your letter here..."></textarea>
+    <div class="btn-row">
+      <button type="submit">Save Letter</button>
+      <button type="button" onclick="exportLetters()">Export All</button>
+      <button type="button" onclick="clearAll()">Clear All</button>
+    </div>
+  </form>
+  <div class="letters-list" id="lettersList"></div>
+</div>
+
+<audio id="chime" src="https://cdn.pixabay.com/audio/2022/03/15/audio_11a4be2f03.mp3"></audio>
+
+<script>
+  // Daily reminder (if supported)
+  let reminderHour = 20; // 8 PM default
+  let reminderSetToday = false;
+
+  // Local storage
+  let letters = [];
+  try {
+    letters = JSON.parse(localStorage.getItem('innerselfletters') || '[]');
+    if (!Array.isArray(letters)) letters = [];
+  } catch {
+    letters = [];
+  }
+
+  function saveLetters() {
+    localStorage.setItem('innerselfletters', JSON.stringify(letters));
+  }
+
+  function renderLetters() {
+    const list = document.getElementById('lettersList');
+    list.innerHTML = '';
+    if (!letters.length) {
+      list.innerHTML = '<div style="text-align:center;color:#bda672;">No letters yet. Write your first one!</div>';
+      return;
+    }
+    letters.slice().reverse().forEach((l, idx) => {
+      const div = document.createElement('div');
+      div.className = 'letter-entry';
+
+      const dateDiv = document.createElement('div');
+      dateDiv.className = 'letter-date';
+      dateDiv.textContent = l.date;
+
+      const bodyDiv = document.createElement('div');
+      bodyDiv.className = 'letter-body';
+      bodyDiv.textContent = l.body;
+
+      // Actions (copy + delete)
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.textContent = 'Copy';
+      copyBtn.onclick = () => {
+        const text = l.date + '\\n\\n' + l.body;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            () => alert('Letter copied to clipboard.'),
+            () => fallbackCopy(text)
+          );
+        } else {
+          fallbackCopy(text);
+        }
+      };
+
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.textContent = 'Delete';
+      delBtn.onclick = () => {
+        if (confirm('Delete this letter?')) {
+          // reverse index mapping
+          letters.splice(letters.length - 1 - idx, 1);
+          saveLetters();
+          renderLetters();
+        }
+      };
+
+      actions.appendChild(copyBtn);
+      actions.appendChild(delBtn);
+
+      div.appendChild(actions);
+      div.appendChild(dateDiv);
+      div.appendChild(bodyDiv);
+      list.appendChild(div);
+    });
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      alert('Letter copied to clipboard.');
+    } catch (e) {
+      alert('Could not copy letter automatically, but you can select and copy it manually.');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // Template insertion
+  function fillTemplate() {
+    document.getElementById('letterInput').value =
+`Dear Inner Self,
+
+Today I am writing to you because _________.
+
+Right now, I am feeling ____________.
+I want you to know that ____________.
+
+Thank you for ____________.
+I am sorry for ____________.
+I forgive you for ____________.
+
+What do you most need right now?
+What dreams or fears are you carrying today?
+
+If you could say one thing to me, what would it be?
+If I could promise you one thing, it would be ____________.
+
+May we grow in ____________, and rest in ____________.
+
+With love,
+[Your name]`;
+    document.getElementById('letterInput').focus();
+  }
+
+  // Save new letter
+  document.getElementById('letterForm').onsubmit = function(e){
+    e.preventDefault();
+    const body = document.getElementById('letterInput').value.trim();
+    if (!body) return;
+    const date = new Date().toLocaleString(undefined, {
+      weekday:'short',
+      month:'short',
+      day:'numeric',
+      year:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit'
+    });
+    letters.push({ date, body });
+    saveLetters();
+    renderLetters();
+    document.getElementById('letterInput').value = '';
+    document.getElementById('chime').play().catch(()=>{});
+    const submitBtn = e.target.querySelector('button[type=submit]');
+    if (submitBtn) {
+      const oldText = submitBtn.textContent;
+      submitBtn.textContent = 'Saved!';
+      setTimeout(() => { submitBtn.textContent = oldText; }, 400);
+    }
+  };
+
+  // Export all letters
+  function exportLetters() {
+    if (!letters.length) return alert('No letters to export.');
+    const content = letters.map(l => `${l.date}\n${l.body}`).join('\n\n---\n\n');
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "InnerSelfLetters.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Clear all
+  function clearAll() {
+    if (confirm("Delete ALL letters?")) {
+      letters = [];
+      saveLetters();
+      renderLetters();
+    }
+  }
+
+  renderLetters();
+
+  // Soft daily chime at reminderHour (20:00 local time)
+  function checkReminderChime() {
+    const now = new Date();
+    if (now.getHours() === reminderHour && !reminderSetToday) {
+      document.getElementById('chime').play().catch(()=>{});
+      reminderSetToday = true;
+      setTimeout(() => { reminderSetToday = false; }, 60 * 60 * 1000); // 1 hour lockout
+    }
+    if (now.getHours() !== reminderHour) reminderSetToday = false;
+  }
+  setInterval(checkReminderChime, 60 * 1000); // check every minute
+</script>
+</body>
+</html>
