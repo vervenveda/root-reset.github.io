@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio Quest — The Color Alchemist</title>
+<style>
+:root{
+  --night:#0d0a08;
+  --panel:#1b1611;
+  --gold:#d9b878;
+  --gold-deep:#b58b25;
+  --ink:#fdfaf3;
+  --radius:16px;
+  --shadow:0 14px 40px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at 50% -20%,#3d2b10 0%,var(--night) 90%),var(--night);
+  font-family:"Cormorant Garamond","Georgia",serif;
+  color:var(--ink);
+  display:flex;justify-content:center;align-items:center;
+  padding:24px;
+}
+#game{
+  background:var(--panel);
+  border:1px solid rgba(217,184,120,0.25);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  width:420px;max-width:95vw;text-align:center;
+  padding:30px 26px 34px;
+}
+h1{
+  font-family:"Cinzel",serif;
+  font-size:1.8em;
+  color:var(--gold);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin-bottom:.5em;
+}
+#target,#mix{
+  width:160px;height:90px;margin:10px auto;border-radius:var(--radius);
+  border:1px solid rgba(217,184,120,0.4);
+  box-shadow:0 0 12px rgba(217,184,120,0.15) inset;
+}
+#sliders{margin:18px 0;}
+label{display:block;margin:6px 0 3px;font-size:.9em;color:var(--gold);}
+input[type=range]{width:100%;}
+button{
+  margin-top:10px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  color:#1a1409;
+  border:none;
+  border-radius:999px;
+  padding:9px 24px;
+  font-family:"Cinzel",serif;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.5);
+  transition:transform .2s,box-shadow .2s;
+}
+button:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.6);}
+#score{margin-top:12px;font-size:1.05em;color:var(--gold);}
+#reflection{margin-top:6px;font-size:.9em;color:rgba(255,255,240,.75);min-height:2.4em;white-space:pre-line;}
+#progress{
+  display:flex;justify-content:center;gap:6px;margin:10px 0 8px;
+}
+.orb{
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(217,184,120,.25);border:1px solid rgba(217,184,120,.4);
+  transition:background .3s,box-shadow .3s;
+}
+.orb.active{background:var(--gold);box-shadow:0 0 10px var(--gold);}
+#codex{
+  margin-top:18px;padding:12px 10px;
+  border-top:1px solid rgba(217,184,120,.3);
+  font-size:.88em;color:rgba(255,255,240,.6);
+}
+footer{margin-top:18px;font-size:.75em;color:rgba(255,255,240,.45);}
+</style>
+</head>
+<body>
+<div id="game">
+  <h1>The Color Alchemist</h1>
+  <div>Match this hue:</div>
+  <div id="target"></div>
+  <div>Your mix:</div>
+  <div id="mix"></div>
+
+  <div id="sliders">
+    <label>Red</label><input type="range" id="r" min="0" max="255" value="128">
+    <label>Green</label><input type="range" id="g" min="0" max="255" value="128">
+    <label>Blue</label><input type="range" id="b" min="0" max="255" value="128">
+  </div>
+
+  <button id="checkBtn">Check Harmony</button>
+  <button id="nextBtn">Next Round</button>
+
+  <div id="progress"></div>
+  <div id="score"></div>
+  <div id="reflection"></div>
+  <div id="codex"></div>
+  <footer>PLERA · Sagaen Studio Quest 2026</footer>
+</div>
+
+<script>
+const r=document.getElementById('r'),g=document.getElementById('g'),b=document.getElementById('b');
+const mixBox=document.getElementById('mix');
+const targetBox=document.getElementById('target');
+const scoreEl=document.getElementById('score');
+const reflection=document.getElementById('reflection');
+const codex=document.getElementById('codex');
+const progress=document.getElementById('progress');
+
+const LEVELS=[
+  {min:50,title:"Apprentice of Light",line:"You’ve found the courage to begin."},
+  {min:65,title:"Hue Seeker",line:"Each color teaches its own calm."},
+  {min:75,title:"Tone Weaver",line:"Harmony hums between patience and play."},
+  {min:85,title:"Shade Sculptor",line:"Your hands remember the language of gold."},
+  {min:92,title:"Master of Morning Hue",line:"You’ve caught the breath of dawn."},
+  {min:96,title:"Keeper of Balance",line:"Color bends to your stillness."},
+  {min:100,title:"Grand Alchemist",line:"Light itself bows to your craft."}
+];
+let data=JSON.parse(localStorage.getItem('alchemyData')||'{"level":0,"bestScore":0}');
+let target=[0,0,0];
+
+function rgb(a){return `rgb(${a[0]},${a[1]},${a[2]})`;}
+function randColor(){return [rand(256),rand(256),rand(256)];}
+function rand(max){return Math.floor(Math.random()*max);}
+function initProgress(){
+  progress.innerHTML='';
+  for(let i=0;i<7;i++){
+    const d=document.createElement('div');
+    d.className='orb'+(i<data.level?' active':'');
+    progress.appendChild(d);
+  }
+}
+function newRound(){
+  target=randColor();
+  targetBox.style.background=rgb(target);
+  [r,g,b].forEach(s=>s.value=128);
+  mixBox.style.background='rgb(128,128,128)';
+  scoreEl.textContent='';reflection.textContent='';codex.textContent='';
+  initProgress();
+}
+[r,g,b].forEach(s=>s.oninput=()=>{
+  mixBox.style.background=rgb([+r.value,+g.value,+b.value]);
+});
+
+function checkHarmony(){
+  const mix=[+r.value,+g.value,+b.value];
+  const diff=Math.sqrt((mix[0]-target[0])**2+(mix[1]-target[1])**2+(mix[2]-target[2])**2);
+  const score=Math.max(0,100-Math.round(diff/4.4));
+  scoreEl.textContent=`Harmony Score: ${score}%`;
+  updateProgress(score);
+}
+function updateProgress(score){
+  if(score>data.bestScore)data.bestScore=score;
+  let newLevel=data.level;
+  for(let i=0;i<LEVELS.length;i++){
+    if(score>=LEVELS[i].min)newLevel=i+1;
+  }
+  if(newLevel>data.level)data.level=newLevel;
+  localStorage.setItem('alchemyData',JSON.stringify(data));
+  initProgress();
+  const lvl=LEVELS[newLevel-1]||LEVELS[0];
+  reflection.textContent=lvl.line;
+  codex.textContent=`Title Unlocked: ${lvl.title}\nBest Score: ${data.bestScore}%`;
+}
+document.getElementById('checkBtn').onclick=checkHarmony;
+document.getElementById('nextBtn').onclick=newRound;
+newRound();
+</script>
+</body>
+</html>
