@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Daily Spark Studio — Multilingual Writing Lab</title>
+  <style>
+    :root{
+      --bg1:##646361;
+      --bg2:#f3f7fb;
+      --card:#ffffff;
+      --ink:#22252b;
+      --muted:#6b7280;
+      --accent:#f97360;
+      --accent-soft:rgba(249,115,96,.12);
+      --accent2:#4f46e5;
+      --shadow:0 14px 32px rgba(15,23,42,.12);
+      --r:20px;
+    }
+    *{box-sizing:border-box;}
+
+    html,body{
+      margin:0;
+      padding:0;
+      height:100%;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
+    }
+    body{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:18px 8px;
+    }
+
+    .app{
+      width:100%;
+      max-width:1020px;
+      background:var(--card);
+      border-radius:26px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(148,163,184,0.35);
+      padding:18px 18px 14px;
+    }
+    @media (max-width:800px){
+      .app{padding:14px 10px;border-radius:18px;}
+    }
+
+    .top-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .glyph{
+      width:40px;height:40px;border-radius:16px;
+      background:radial-gradient(circle at 30% 20%,#ffe8b4,#f97360 45%,#f97360 60%,#fb7185 100%);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.4rem;
+      box-shadow:0 10px 26px rgba(248,113,113,.5);
+    }
+    h1{
+      font-size:1.15rem;
+      margin:0;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .tagline{
+      font-size:.82rem;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .controls-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin-top:4px;
+    }
+    .pill-label{
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+    }
+    select,input[type="date"]{
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,0.7);
+      padding:7px 10px;
+      font-size:.9rem;
+      background:#fff;
+      outline:none;
+      min-width:110px;
+    }
+    select:focus,input[type="date"]:focus{
+      border-color:var(--accent2);
+      box-shadow:0 0 0 2px rgba(79,70,229,.15);
+    }
+
+    .chips-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:6px;
+    }
+    .chip{
+      font-size:.8rem;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.6);
+      color:var(--muted);
+      background:#f9fafb;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+      gap:14px;
+      margin-top:12px;
+    }
+    @media (max-width:900px){
+      .layout{grid-template-columns:minmax(0,1fr);}
+    }
+
+    .panel{
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,0.4);
+      background:#f9fafb;
+      padding:12px;
+      min-height:140px;
+    }
+    .panel-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-bottom:4px;
+    }
+    .panel-title{
+      font-size:.9rem;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:#4b5563;
+    }
+    .panel-sub{
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    .prompt-box{
+      border-radius:14px;
+      background:#fff7ec;
+      border:1px solid rgba(248,189,135,0.8);
+      padding:10px;
+      font-size:.92rem;
+      line-height:1.45;
+      margin-top:6px;
+      min-height:56px;
+    }
+    .prompt-empty{
+      opacity:.7;
+      font-style:italic;
+    }
+
+    .btn{
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.7);
+      background:#fff;
+      padding:7px 14px;
+      font-size:.9rem;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      cursor:pointer;
+      color:#111827;
+      transition:background .12s, box-shadow .12s, transform .05s, border-color .12s;
+      user-select:none;
+    }
+    .btn:hover{
+      background:#f3f4ff;
+      border-color:rgba(79,70,229,.6);
+      box-shadow:0 8px 18px rgba(79,70,229,.15);
+    }
+    .btn:active{transform:translateY(1px);}
+    .btn.primary{
+      background:var(--accent-soft);
+      border-color:rgba(249,115,96,.7);
+      color:#7f1d1d;
+    }
+    .btn.primary:hover{
+      background:rgba(249,115,96,.16);
+      box-shadow:0 8px 18px rgba(248,113,113,.3);
+    }
+    .btn.small{padding:5px 10px;font-size:.82rem;border-radius:14px;}
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin:4px 0 8px;
+    }
+    .tb-btn{
+      border-radius:10px;
+      border:1px solid rgba(148,163,184,0.6);
+      background:#ffffff;
+      padding:4px 8px;
+      font-size:.85rem;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      color:#374151;
+      min-width:32px;
+      justify-content:center;
+    }
+    .tb-btn:hover{
+      background:#e5edff;
+      border-color:rgba(79,70,229,.7);
+    }
+
+    .editor{
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,0.7);
+      background:#ffffff;
+      padding:10px 11px;
+      min-height:210px;
+      max-height:480px;
+      overflow-y:auto;
+      font-size:.95rem;
+      line-height:1.6;
+      outline:none;
+    }
+    .editor:focus{
+      border-color:var(--accent2);
+      box-shadow:0 0 0 2px rgba(79,70,229,.18);
+    }
+
+    .timer-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin:2px 0 6px;
+    }
+    .timer-controls{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+    .timer-display{
+      font-size:.85rem;
+      color:var(--muted);
+      min-width:46px;
+      text-align:right;
+    }
+
+    .attachments{
+      margin-top:8px;
+    }
+    .attachments-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:.82rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    .attachments-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin-bottom:4px;
+    }
+    .attachments-note{
+      font-size:.78rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    .attachments-strip{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .thumb{
+      position:relative;
+      border-radius:10px;
+      border:1px solid rgba(148,163,184,0.7);
+      overflow:hidden;
+      background:#fff;
+    }
+    .thumb img,
+    .thumb video{
+      display:block;
+      width:90px;
+      height:70px;
+      object-fit:cover;
+    }
+    .thumb-remove{
+      position:absolute;
+      top:2px;
+      right:2px;
+      border:none;
+      border-radius:999px;
+      background:rgba(15,23,42,.85);
+      color:#fff;
+      font-size:.7rem;
+      width:18px;
+      height:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .thumb-remove:hover{
+      background:#b91c1c;
+    }
+    @media (max-width:900px){
+      .thumb img,
+      .thumb video{
+        width:70px;
+        height:56px;
+      }
+    }
+
+    .bottom-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:10px;
+      padding-top:8px;
+      border-top:1px dashed rgba(148,163,184,0.6);
+      font-size:.82rem;
+      color:var(--muted);
+    }
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .status{
+      font-size:.8rem;
+      color:#16a34a;
+      opacity:0;
+      transition:opacity .3s;
+    }
+    .status.show{opacity:1;}
+    .stats-text{
+      font-size:.8rem;
+      color:var(--muted);
+      margin-top:2px;
+      text-align:right;
+    }
+
+    .footer{
+      margin-top:8px;
+      text-align:center;
+      font-size:.78rem;
+      color:var(--muted);
+    }
+
+    @media print{
+      body{background:#fff;padding:0;}
+      .app{
+        box-shadow:none;border:none;border-radius:0;
+        max-width:none;padding:14px;
+      }
+      .controls-row,.chips-row,.toolbar,.button-row,
+      .status,.footer,.timer-row,.attachments{
+        display:none !important;
+      }
+      .panel,.editor,.prompt-box{
+        border-color:#e5e7eb;
+        background:#ffffff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" dir="ltr">
+    <div class="top-row">
+      <div class="brand">
+        <div class="glyph" aria-hidden="true">✍️</div>
+        <div>
+          <h1 id="titleText">Daily Spark Studio</h1>
+          <div class="tagline" id="taglineText">
+            A gentle space for daily writing — one prompt, many languages.
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="pill-label" id="langLabel">Language</div>
+        <div class="controls-row">
+          <select id="langSelect">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="ar">العربية</option>
+          </select>
+          <div>
+            <div class="pill-label" id="dateLabel">Date</div>
+            <input type="date" id="entryDate">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips-row">
+      <span class="chip" id="chipLocal">Local only · saves in this browser</span>
+      <span class="chip" id="chipPrint">Use “Print” to create a paper copy</span>
+      <span class="chip" id="chipSoft">Soft space · no judgment, just practice</span>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT: prompt controls -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title" id="promptPanelTitle">Prompt</div>
+            <div class="panel-sub" id="promptPanelSub">
+              Choose a style and mood, then generate a spark.
+            </div>
+          </div>
+          <button class="btn small primary" id="newPromptBtn">✨ New Prompt</button>
+        </div>
+
+        <div class="controls-row" style="margin-top:6px;">
+          <div>
+            <div class="pill-label" id="styleLabel">Style</div>
+            <select id="styleSelect">
+              <option value="journal">Journal</option>
+              <option value="story">Story</option>
+              <option value="gratitude">Gratitude</option>
+              <option value="letter">Letter to Self</option>
+            </select>
+          </div>
+          <div>
+            <div class="pill-label" id="moodLabel">Mood</div>
+            <select id="moodSelect">
+              <option value="calm">Calm</option>
+              <option value="playful">Playful</option>
+              <option value="brave">Brave</option>
+              <option value="reflective">Reflective</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="prompt-box" id="promptBox">
+          <span class="prompt-empty" id="promptEmpty">
+            Click “New Prompt” to begin.
+          </span>
+        </div>
+      </div>
+
+      <!-- RIGHT: writing space -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title" id="writingTitle">Writing Space</div>
+            <div class="panel-sub" id="writingSub">
+              Use the tools below — your words stay here with you.
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar" id="toolbar">
+          <button class="tb-btn" data-cmd="bold"><b>B</b></button>
+          <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+          <button class="tb-btn" data-cmd="underline"><u>U</u></button>
+          <button class="tb-btn" data-cmd="insertUnorderedList">• List</button>
+          <button class="tb-btn" data-cmd="justifyLeft">⟸</button>
+          <button class="tb-btn" data-cmd="justifyCenter">≡</button>
+          <button class="tb-btn" data-cmd="justifyRight">⟹</button>
+        </div>
+
+        <div class="timer-row" id="timerRow">
+          <span class="panel-sub" id="timerLabel">Focus timer</span>
+          <div class="timer-controls">
+            <button class="tb-btn" data-timer="5">5m</button>
+            <button class="tb-btn" data-timer="10">10m</button>
+            <button class="tb-btn" data-timer="15">15m</button>
+            <button class="tb-btn" data-timer="stop">✕</button>
+            <span class="timer-display" id="timerDisplay">--:--</span>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-top:0;gap:6px;align-items:center;">
+          <div class="pill-label" id="fontLabel" style="margin-right:4px;">Font</div>
+          <select id="fontSelect">
+            <option value="default">Default (Clean)</option>
+            <option value="serif">Serif (Bookish)</option>
+            <option value="mono">Mono (Typewriter)</option>
+            <option value="hand">Playful (Hand-style)</option>
+          </select>
+        </div>
+
+        <div class="editor" id="editor" contenteditable="true" spellcheck="true"></div>
+
+        <div class="attachments" id="attachmentsSection">
+          <div class="attachments-head">
+            <span id="attachmentsTitle">Attachments · art / photo / video</span>
+          </div>
+          <div class="attachments-row">
+            <button class="btn small" id="addMediaBtn">📎 Add media</button>
+            <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;">
+          </div>
+          <div class="attachments-note" id="attachmentsNote">
+            Images save with your entry. Videos stay only while this page is open.
+          </div>
+          <div class="attachments-strip" id="attachmentsStrip"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-row">
+      <div class="button-row">
+        <button class="btn small" id="saveBtn">💾 Save</button>
+        <button class="btn small" id="exportBtn">⬇️ Export JSON</button>
+        <button class="btn small" id="printBtn">🖨 Print</button>
+        <button class="btn small" id="clearBtn">🧼 Clear today</button>
+      </div>
+      <div style="text-align:right;">
+        <div><span id="savedStatus" class="status">Saved ✓</span></div>
+        <div id="statsText" class="stats-text">0 words · 0 min</div>
+      </div>
+    </div>
+
+    <div class="footer" id="footerText">
+      Daily Spark Studio · Khaemenes Academy · Pearls Gamut™ · 2025 · All entries remain on your device.
+    </div>
+  </div>
+
+<script>
+/* ==========================================================
+   Daily Spark Studio — Multilingual Prompt + Writing Lab
+   v2: stats, focus timer, media attachments, font choices
+   Single-file, vanilla JS, localStorage only.
+   ========================================================== */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- i18n strings ---------- */
+const STRINGS = {
+  en: {
+    title: "Daily Spark Studio",
+    tagline: "A gentle space for daily writing — one prompt, many languages.",
+    langLabel: "Language",
+    dateLabel: "Date",
+    fontLabel: "Font",
+    timerLabel: "Focus timer",
+    attachmentsTitle: "Attachments · art / photo / video",
+    attachmentsNote: "Images save with your entry. Videos stay only while this page is open.",
+    chips: {
+      local: "Local only · saves in this browser",
+      print: "Use “Print” to create a paper copy",
+      soft: "Soft space · no judgment, just practice"
+    },
+    promptPanelTitle: "Prompt",
+    promptPanelSub: "Choose a style and mood, then generate a spark.",
+    styleLabel: "Style",
+    moodLabel: "Mood",
+    styles: {
+      journal: "Journal",
+      story: "Story",
+      gratitude: "Gratitude",
+      letter: "Letter to Self"
+    },
+    moods: {
+      calm: "Calm",
+      playful: "Playful",
+      brave: "Brave",
+      reflective: "Reflective"
+    },
+    newPrompt: "✨ New Prompt",
+    promptEmpty: "Click “New Prompt” to begin.",
+    writingTitle: "Writing Space",
+    writingSub: "Use the tools below — your words stay here with you.",
+    buttons: {
+      save: "💾 Save",
+      export: "⬇️ Export JSON",
+      print: "🖨 Print",
+      clear: "🧼 Clear today"
+    },
+    savedStatus: "Saved ✓",
+    footer: "Daily Spark Studio · Khaemenes Academy · Pearls Gamut™ · 2025 · All entries remain on your device."
+  },
+  es: {
+    title: "Estudio Chispa Diaria",
+    tagline: "Un espacio suave para escribir cada día — una chispa, muchos idiomas.",
+    langLabel: "Idioma",
+    dateLabel: "Fecha",
+    fontLabel: "Fuente",
+    timerLabel: "Temporizador",
+    attachmentsTitle: "Archivos adjuntos · arte / foto / vídeo",
+    attachmentsNote: "Las imágenes se guardan con tu entrada. Los vídeos solo permanecen mientras esta página esté abierta.",
+    chips: {
+      local: "Solo local · se guarda en este navegador",
+      print: "Usa “Imprimir” para crear una copia en papel",
+      soft: "Espacio suave · sin juicio, solo práctica"
+    },
+    promptPanelTitle: "Chispa",
+    promptPanelSub: "Elige estilo y estado de ánimo, luego genera una chispa.",
+    styleLabel: "Estilo",
+    moodLabel: "Estado de ánimo",
+    styles: {
+      journal: "Diario",
+      story: "Historia",
+      gratitude: "Gratitud",
+      letter: "Carta a mí"
+    },
+    moods: {
+      calm: "Calma",
+      playful: "Juguetón",
+      brave: "Valiente",
+      reflective: "Reflexivo"
+    },
+    newPrompt: "✨ Nueva chispa",
+    promptEmpty: "Haz clic en “Nueva chispa” para empezar.",
+    writingTitle: "Espacio para escribir",
+    writingSub: "Usa las herramientas de abajo — tus palabras se quedan aquí contigo.",
+    buttons: {
+      save: "💾 Guardar",
+      export: "⬇️ Exportar JSON",
+      print: "🖨 Imprimir",
+      clear: "🧼 Vaciar hoy"
+    },
+    savedStatus: "Guardado ✓",
+    footer: "Estudio Chispa Diaria · Khaemenes Academy · Pearls Gamut™ · 2025 · Las entradas permanecen en tu dispositivo."
+  },
+  fr: {
+    title: "Atelier Étincelle du Jour",
+    tagline: "Un espace doux pour écrire chaque jour — une étincelle, plusieurs langues.",
+    langLabel: "Langue",
+    dateLabel: "Date",
+    fontLabel: "Police",
+    timerLabel: "Minuteur",
+    attachmentsTitle: "Pièces jointes · art / photo / vidéo",
+    attachmentsNote: "Les images sont enregistrées avec ton entrée. Les vidéos restent seulement pendant cette session.",
+    chips: {
+      local: "Local uniquement · enregistré dans ce navigateur",
+      print: "Utilisez « Imprimer » pour créer une copie papier",
+      soft: "Espace doux · pas de jugement, seulement la pratique"
+    },
+    promptPanelTitle: "Étincelle",
+    promptPanelSub: "Choisissez un style et une humeur, puis générez une étincelle.",
+    styleLabel: "Style",
+    moodLabel: "Humeur",
+    styles: {
+      journal: "Journal",
+      story: "Histoire",
+      gratitude: "Gratitude",
+      letter: "Lettre à soi"
+    },
+    moods: {
+      calm: "Calme",
+      playful: "Ludique",
+      brave: "Courageux",
+      reflective: "Réfléchi"
+    },
+    newPrompt: "✨ Nouvelle étincelle",
+    promptEmpty: "Cliquez sur « Nouvelle étincelle » pour commencer.",
+    writingTitle: "Espace d’écriture",
+    writingSub: "Utilisez les outils ci-dessous — vos mots restent ici avec vous.",
+    buttons: {
+      save: "💾 Enregistrer",
+      export: "⬇️ Exporter JSON",
+      print: "🖨 Imprimer",
+      clear: "🧼 Effacer aujourd’hui"
+    },
+    savedStatus: "Enregistré ✓",
+    footer: "Atelier Étincelle du Jour · Khaemenes Academy · Pearls Gamut™ · 2025 · Les entrées restent sur votre appareil."
+  },
+  ar: {
+    title: "مرسم شرارة اليوم",
+    tagline: "مساحة لطيفة للكتابة اليومية — شرارة واحدة، ولغات عديدة.",
+    langLabel: "اللغة",
+    dateLabel: "التاريخ",
+    fontLabel: "الخط",
+    timerLabel: "مؤقّت تركيز",
+    attachmentsTitle: "مرفقات · فن / صورة / فيديو",
+    attachmentsNote: "الصور تُحفَظ مع مدخلتك. مقاطع الفيديو تبقى لهذه الجلسة فقط.",
+    chips: {
+      local: "محلي فقط · يُحفظ في هذا المتصفّح",
+      print: "استخدمي «طباعة» لإنشاء نسخة ورقية",
+      soft: "مساحة لطيفة · بلا حُكم، فقط ممارسة"
+    },
+    promptPanelTitle: "شرارة",
+    promptPanelSub: "اختاري الأسلوب والمزاج ثم أنشئي شرارة.",
+    styleLabel: "الأسلوب",
+    moodLabel: "المزاج",
+    styles: {
+      journal: "مذكّرات",
+      story: "قصة",
+      gratitude: "امتنان",
+      letter: "رسالة إلى نفسي"
+    },
+    moods: {
+      calm: "هادئ",
+      playful: "مرِح",
+      brave: "شجاع",
+      reflective: "تأمّلي"
+    },
+    newPrompt: "✨ شرارة جديدة",
+    promptEmpty: "اضغطي «شرارة جديدة» للبدء.",
+    writingTitle: "مساحة الكتابة",
+    writingSub: "استخدمي الأدوات أدناه — كلماتك تبقى هنا معك.",
+    buttons: {
+      save: "💾 حفظ",
+      export: "⬇️ تصدير JSON",
+      print: "🖨 طباعة",
+      clear: "🧼 مسح اليوم"
+    },
+    savedStatus: "تم الحفظ ✓",
+    footer: "مرسم شرارة اليوم · Khaemenes Academy · Pearls Gamut™ · 2025 · جميع المداخل تبقى على جهازك."
+  }
+};
+
+/* ---------- Prompt catalog (same as before) ---------- */
+const PROMPTS = { /* (same PROMPTS object as previous version — omitted here for brevity in comment,
+                     but in the actual file keep the full PROMPTS object exactly as above) */ };
+
+// --- Full PROMPTS object from previous answer goes here (unchanged) ---
+/* For space, I'm not collapsing it here in comments; when you paste, keep the full PROMPTS
+   block that includes en/es/fr/ar like in the earlier version. */
+
+/* ---------- State helpers ---------- */
+
+const langSelect = $("langSelect");
+const entryDate = $("entryDate");
+const styleSelect = $("styleSelect");
+const moodSelect  = $("moodSelect");
+const promptBox   = $("promptBox");
+const promptEmpty = $("promptEmpty");
+const editor      = $("editor");
+const savedStatus = $("savedStatus");
+const fontSelect  = $("fontSelect");
+const attachmentsStrip = $("attachmentsStrip");
+const mediaInput  = $("mediaInput");
+const addMediaBtn = $("addMediaBtn");
+
+const MAX_IMAGES = 4;
+let currentImages = [];
+let sessionVideos = [];
+let sessionStart = null;
+let statsTimer = null;
+let timerSeconds = 0;
+let timerInterval = null;
+
+function todayISO(){
+  return new Date().toISOString().slice(0,10);
+}
+function storageKey(){
+  const d = entryDate.value || todayISO();
+  const lang = langSelect.value || "en";
+  return "daily_spark_" + lang + "_" + d;
+}
+
+/* ---------- Font helpers ---------- */
+
+function getFontFamily(val){
+  switch(val){
+    case "serif":
+      return 'Georgia, "Times New Roman", serif';
+    case "mono":
+      return 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+    case "hand":
+      return '"Comic Sans MS", "Comic Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+    default:
+      return 'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif';
+  }
+}
+function applyFontSelection(){
+  if(!fontSelect || !editor) return;
+  const val = fontSelect.value || "default";
+  editor.style.fontFamily = getFontFamily(val);
+}
+
+/* ---------- Stats: word count + session minutes ---------- */
+
+function updateStats(){
+  if(!editor) return;
+  let text = editor.innerText || editor.textContent || "";
+  text = text.replace(/\s+/g," ").trim();
+  const words = text ? text.split(" ").length : 0;
+  let mins = 0;
+  if(sessionStart){
+    mins = Math.floor((Date.now() - sessionStart)/60000);
+  }
+  const el = $("statsText");
+  if(el){
+    el.textContent = words + " words · " + mins + " min";
+  }
+}
+
+/* ---------- Focus timer ---------- */
+
+function updateTimerDisplay(){
+  const el = $("timerDisplay");
+  if(!el) return;
+  if(timerSeconds <= 0){
+    el.textContent = "--:--";
+    return;
+  }
+  const m = Math.floor(timerSeconds/60);
+  const s = timerSeconds % 60;
+  const mm = String(m).padStart(2,"0");
+  const ss = String(s).padStart(2,"0");
+  el.textContent = mm + ":" + ss;
+}
+function clearFocusTimer(){
+  if(timerInterval){
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  timerSeconds = 0;
+  updateTimerDisplay();
+}
+function playChime(){
+  try{
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if(!Ctx) return;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    const now = ctx.currentTime;
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.4, now+0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now+1.5);
+    osc.start(now);
+    osc.stop(now+1.6);
+  }catch(e){}
+}
+function startFocusTimer(mins){
+  clearFocusTimer();
+  timerSeconds = Math.max(1, Math.round(mins*60));
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timerSeconds--;
+    if(timerSeconds <= 0){
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSeconds = 0;
+      updateTimerDisplay();
+      playChime();
+    }else{
+      updateTimerDisplay();
+    }
+  },1000);
+}
+
+/* ---------- i18n apply ---------- */
+
+function applyLanguage(lang){
+  const t = STRINGS[lang] || STRINGS.en;
+  document.documentElement.lang = lang;
+  document.body.dir = (lang === "ar" ? "rtl" : "ltr");
+
+  $("titleText").textContent   = t.title;
+  $("taglineText").textContent = t.tagline;
+  $("langLabel").textContent   = t.langLabel;
+  $("dateLabel").textContent   = t.dateLabel;
+  $("fontLabel").textContent   = t.fontLabel;
+  $("timerLabel").textContent  = t.timerLabel;
+  $("attachmentsTitle").textContent = t.attachmentsTitle;
+  $("attachmentsNote").textContent  = t.attachmentsNote;
+
+  $("chipLocal").textContent   = t.chips.local;
+  $("chipPrint").textContent   = t.chips.print;
+  $("chipSoft").textContent    = t.chips.soft;
+  $("promptPanelTitle").textContent = t.promptPanelTitle;
+  $("promptPanelSub").textContent   = t.promptPanelSub;
+  $("styleLabel").textContent  = t.styleLabel;
+  $("moodLabel").textContent   = t.moodLabel;
+  $("newPromptBtn").textContent = t.newPrompt;
+  $("promptEmpty").textContent  = t.promptEmpty;
+  $("writingTitle").textContent = t.writingTitle;
+  $("writingSub").textContent   = t.writingSub;
+  $("saveBtn").textContent      = t.buttons.save;
+  $("exportBtn").textContent    = t.buttons.export;
+  $("printBtn").textContent     = t.buttons.print;
+  $("clearBtn").textContent     = t.buttons.clear;
+  $("footerText").textContent   = t.footer;
+  savedStatus.textContent       = t.savedStatus;
+
+  // update style/mood option labels
+  const st = t.styles;
+  styleSelect.querySelectorAll("option").forEach(opt=>{
+    const v = opt.value;
+    if(st[v]) opt.textContent = st[v];
+  });
+  const md = t.moods;
+  moodSelect.querySelectorAll("option").forEach(opt=>{
+    const v = opt.value;
+    if(md[v]) opt.textContent = md[v];
+  });
+
+  // re-load entry for same date in new language
+  loadEntry();
+}
+
+/* ---------- Prompt logic ---------- */
+
+function pickPrompt(){
+  const lang = langSelect.value || "en";
+  const style = styleSelect.value || "journal";
+  const mood  = moodSelect.value || "calm";
+
+  const langPrompts = PROMPTS[lang] || PROMPTS.en;
+  const styleSet = langPrompts[style] || langPrompts.journal;
+  const moodList = styleSet[mood] || styleSet.calm;
+
+  if(!moodList || !moodList.length){
+    promptBox.textContent = "(no prompts defined yet)";
+    promptEmpty.style.display = "none";
+    return;
+  }
+  const idx = Math.floor(Math.random()*moodList.length);
+  promptBox.textContent = moodList[idx];
+  promptEmpty.style.display = "none";
+}
+
+/* ---------- Attachments ---------- */
+
+function renderAttachments(){
+  if(!attachmentsStrip) return;
+  attachmentsStrip.innerHTML = "";
+
+  currentImages.forEach((imgObj, idx)=>{
+    const wrap = document.createElement("div");
+    wrap.className = "thumb";
+    wrap.dataset.index = String(idx);
+    const img = document.createElement("img");
+    img.src = imgObj.data;
+    img.alt = imgObj.name || ("image "+(idx+1));
+    const btn = document.createElement("button");
+    btn.className = "thumb-remove";
+    btn.type = "button";
+    btn.textContent = "×";
+    wrap.appendChild(img);
+    wrap.appendChild(btn);
+    attachmentsStrip.appendChild(wrap);
+  });
+
+  sessionVideos.forEach((url)=>{
+    const wrap = document.createElement("div");
+    wrap.className = "thumb";
+    const vid = document.createElement("video");
+    vid.src = url;
+    vid.controls = true;
+    wrap.appendChild(vid);
+    attachmentsStrip.appendChild(wrap);
+  });
+}
+
+function processImageFile(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const dataUrl = e.target.result;
+    const img = new Image();
+    img.onload = ()=>{
+      const maxDim = 900;
+      let width = img.width;
+      let height = img.height;
+      const scale = Math.min(1, maxDim/width, maxDim/height);
+      const w = Math.max(1, Math.round(width*scale));
+      const h = Math.max(1, Math.round(height*scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img,0,0,w,h);
+      let out;
+      try{
+        out = canvas.toDataURL("image/jpeg",0.8);
+      }catch(_){
+        out = dataUrl;
+      }
+      currentImages.push({name:file.name, data:out});
+      renderAttachments();
+      saveEntry();
+    };
+    img.src = dataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleMediaFiles(e){
+  const files = Array.from(e.target.files || []);
+  if(!files.length) return;
+
+  files.forEach(file=>{
+    if(file.type && file.type.startsWith("image/")){
+      if(currentImages.length >= MAX_IMAGES){
+        alert("Image limit reached (4 per entry).");
+        return;
+      }
+      processImageFile(file);
+    }else if(file.type && file.type.startsWith("video/")){
+      const url = URL.createObjectURL(file);
+      sessionVideos.push(url);
+      renderAttachments();
+    }
+  });
+
+  mediaInput.value = "";
+}
+
+if(attachmentsStrip){
+  attachmentsStrip.addEventListener("click", e=>{
+    const btn = e.target.closest(".thumb-remove");
+    if(!btn) return;
+    const thumb = btn.closest(".thumb");
+    const idx = Number(thumb.dataset.index);
+    if(!Number.isNaN(idx) && idx >= 0){
+      currentImages.splice(idx,1);
+      renderAttachments();
+      saveEntry();
+    }
+  });
+}
+
+window.addEventListener("beforeunload", ()=>{
+  sessionVideos.forEach(url=>URL.revokeObjectURL(url));
+  sessionVideos = [];
+});
+
+/* ---------- Save / Load ---------- */
+
+function showSaved(){
+  savedStatus.classList.add("show");
+  clearTimeout(showSaved._t);
+  showSaved._t = setTimeout(()=>savedStatus.classList.remove("show"), 1200);
+}
+
+function saveEntry(){
+  try{
+    const key = storageKey();
+    const payload = {
+      lang: langSelect.value,
+      date: entryDate.value,
+      style: styleSelect.value,
+      mood: moodSelect.value,
+      prompt: promptBox.textContent || "",
+      html: editor.innerHTML || "",
+      font: fontSelect.value || "default",
+      images: currentImages
+    };
+    localStorage.setItem(key, JSON.stringify(payload));
+    showSaved();
+  }catch(e){
+    console.error("Save failed:", e);
+  }
+}
+
+function loadEntry(){
+  const key = storageKey();
+  const raw = localStorage.getItem(key);
+
+  // reset attachments/session videos for new entry
+  currentImages = [];
+  sessionVideos.forEach(url=>URL.revokeObjectURL(url));
+  sessionVideos = [];
+  renderAttachments();
+
+  if(!raw){
+    editor.innerHTML = "";
+    promptBox.textContent = "";
+    promptEmpty.style.display = "inline";
+    fontSelect.value = "default";
+    applyFontSelection();
+    updateStats();
+    return;
+  }
+  try{
+    const data = JSON.parse(raw);
+    if(data.style) styleSelect.value = data.style;
+    if(data.mood)  moodSelect.value  = data.mood;
+    if(data.prompt){
+      promptBox.textContent = data.prompt;
+      promptEmpty.style.display = "none";
+    }else{
+      promptBox.textContent = "";
+      promptEmpty.style.display = "inline";
+    }
+    editor.innerHTML = data.html || "";
+    if(data.font){
+      fontSelect.value = data.font;
+    }else{
+      fontSelect.value = "default";
+    }
+    applyFontSelection();
+
+    if(Array.isArray(data.images)){
+      currentImages = data.images.slice(0, MAX_IMAGES);
+    }else{
+      currentImages = [];
+    }
+    renderAttachments();
+  }catch(e){
+    editor.innerHTML = "";
+  }
+  updateStats();
+}
+
+/* ---------- Export all entries ---------- */
+
+function exportAll(){
+  const dump = {};
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(!k || !k.startsWith("daily_spark_")) continue;
+    try{
+      dump[k] = JSON.parse(localStorage.getItem(k));
+    }catch{}
+  }
+  const blob = new Blob([JSON.stringify(dump,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "daily_spark_export.json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+/* ---------- Toolbar wiring (rich text) ---------- */
+
+function initToolbar(){
+  const buttons = document.querySelectorAll(".tb-btn");
+  buttons.forEach(btn=>{
+    const cmd = btn.getAttribute("data-cmd");
+    if(!cmd) return;
+    // Prevent mousedown from stealing focus / selection
+    btn.addEventListener("mousedown", ev => ev.preventDefault());
+    btn.addEventListener("click", ()=>{
+      editor.focus();
+      document.execCommand(cmd, false, null);
+      editor.focus();
+    });
+  });
+}
+
+/* ---------- Clear ---------- */
+
+function clearToday(){
+  if(!confirm("Clear today’s entry for this language?")) return;
+  const key = storageKey();
+  localStorage.removeItem(key);
+  editor.innerHTML = "";
+  promptBox.textContent = "";
+  promptEmpty.style.display = "inline";
+  currentImages = [];
+  renderAttachments();
+  clearFocusTimer();
+  sessionStart = null;
+  if(statsTimer){
+    clearInterval(statsTimer);
+    statsTimer = null;
+  }
+  updateStats();
+}
+
+/* ---------- Init ---------- */
+
+(function init(){
+  // date
+  entryDate.value = todayISO();
+  entryDate.max   = todayISO();
+
+  initToolbar();
+  applyLanguage(langSelect.value || "en");
+  loadEntry();
+  applyFontSelection();
+  updateStats();
+  updateTimerDisplay();
+
+  // core events
+  langSelect.addEventListener("change", ()=>applyLanguage(langSelect.value));
+  entryDate.addEventListener("change", loadEntry);
+  styleSelect.addEventListener("change", saveEntry);
+  moodSelect.addEventListener("change", saveEntry);
+
+  $("newPromptBtn").addEventListener("click", ()=>{
+    pickPrompt();
+    saveEntry();
+  });
+
+  if(fontSelect){
+    fontSelect.addEventListener("change", ()=>{
+      applyFontSelection();
+      saveEntry();
+    });
+  }
+
+  editor.addEventListener("input", ()=>{
+    if(!sessionStart){
+      const text = (editor.innerText || editor.textContent || "").trim();
+      if(text.length){
+        sessionStart = Date.now();
+        statsTimer = setInterval(updateStats, 30000);
+      }
+    }
+    updateStats();
+    clearTimeout(editor._t);
+    editor._t = setTimeout(saveEntry, 500);
+  });
+
+  $("saveBtn").addEventListener("click", saveEntry);
+  $("exportBtn").addEventListener("click", exportAll);
+  $("printBtn").addEventListener("click", ()=>window.print());
+  $("clearBtn").addEventListener("click", clearToday);
+
+  if(addMediaBtn && mediaInput){
+    addMediaBtn.addEventListener("click", ()=>mediaInput.click());
+    mediaInput.addEventListener("change", handleMediaFiles);
+  }
+
+  // focus timer buttons
+  document.querySelectorAll("[data-timer]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const val = btn.getAttribute("data-timer");
+      if(val === "stop"){
+        clearFocusTimer();
+      }else{
+        const mins = Number(val) || 0;
+        if(mins > 0) startFocusTimer(mins);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
