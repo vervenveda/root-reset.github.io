@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Inspiration Mosaic</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Epilogue:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #ffe568;
+      --rose: #f6adc6;
+      --aqua: #87f2d4;
+      --violet: #c2a2fa;
+      --deepgold: #fae89a;
+      --panel: #fff9e7;
+      --bg-grad: linear-gradient(120deg,#271c39 0%, #513d5a 100%);
+      --bg-parchment: repeating-linear-gradient(45deg,#f9f6e3,#f7ecd0 50px,#f7eedf 100px);
+      --bg-gold: linear-gradient(115deg,#fbe79e 0%, #fff6c5 50%, #eed27c 100%);
+      --bg-white: #fffef8;
+      --tile-shadow: 0 4px 24px #a2895b22, 0 1.5px 0.5px #ffe56812;
+    }
+    body {
+      font-family: 'Epilogue', 'Montserrat', Arial, sans-serif;
+      background: var(--bg-grad);
+      color: #472c10;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      transition: background 0.3s;
+    }
+    #mainWrap {
+      max-width: 1100px;
+      margin: 48px auto 22px auto;
+      background: var(--panel);
+      border-radius: 28px;
+      box-shadow: 0 10px 42px #3c254410;
+      padding: 42px 18px 38px 18px;
+    }
+    h1 {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--gold);
+      font-size: 2.4em;
+      text-align: center;
+      margin: 0 0 16px 0;
+      text-shadow: 0 2px 16px #e7d49999;
+    }
+    h2 {
+      text-align: center;
+      color: var(--rose);
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 1.45em;
+      font-weight: 700;
+      margin: 14px 0 22px 0;
+      letter-spacing: 0.01em;
+    }
+    #bgSelectorWrap {
+      display: flex; justify-content: center; gap: 11px; margin-bottom: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .bgSelectBtn {
+      border: 2px solid #e7d499;
+      border-radius: 11px;
+      min-width: 44px;
+      height: 32px;
+      margin-right: 6px;
+      cursor: pointer;
+      transition: box-shadow 0.19s, border 0.18s;
+      outline: none;
+      box-shadow: 0 2px 8px #f6adc610;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.99em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 700;
+    }
+    .bgSelectBtn.selected {
+      border: 3.2px solid #d1ae34;
+      box-shadow: 0 4px 18px #ffd80035;
+    }
+    #levelBar {
+      display: flex; justify-content: center; gap: 18px;
+      align-items: center; font-size: 1.12em; margin: 0 0 14px 0;
+    }
+    .levelTag {
+      background: var(--aqua);
+      color: #43281b;
+      border-radius: 12px;
+      padding: 5px 14px;
+      font-weight: 700;
+      font-size: 1em;
+      box-shadow: 0 2px 7px #87f2d488;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    #pointScore {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: var(--gold);
+      color: #664c14;
+      padding: 6px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1em;
+      margin-left: 10px;
+      box-shadow: 0 2px 6px #ffe56844;
+    }
+    #mosaicGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      justify-content: center;
+      align-items: center;
+      margin: 28px auto 0 auto;
+      max-width: 720px;
+      min-height: 340px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 28px #47327e16;
+      background: #fffdf7;
+      transition: background 0.3s;
+    }
+    @media (max-width:700px) {
+      #mainWrap {padding:12px 1vw;}
+      #mosaicGrid {gap:0;}
+    }
+    .tileBox {
+      background: #fefbe6;
+      border-radius: 0px;
+      min-height: 122px;
+      min-width: 122px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: none;
+      box-shadow: none;
+      transition: box-shadow 0.16s, border 0.12s;
+    }
+    .tileBox.filled { background: #fff; }
+    .tileBox .tile-content {
+      font-size:1.19em; font-weight:700; color:#4a3421; text-align:center;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(251, 245, 236, 0.85);
+      z-index: 1;
+      font-family: 'Epilogue', Arial, sans-serif;
+      letter-spacing: 0.01em;
+      padding: 4px;
+    }
+    .tileBox img {
+      width:100%; height:100%; object-fit:cover;
+      min-height: 122px; min-width: 122px;
+      border-radius: 0px;
+      margin:0;
+      display:block;
+    }
+    .tileBox .editBtn { position: absolute; top: 7px; right: 7px; font-size:1.12em; background:var(--gold); border-radius:8px; border:none; color:#5c3910; cursor:pointer; padding:3px 8px; z-index:2;}
+    .tileBox .tile-owner { font-size:0.87em; color:#ab8692; font-family:'Montserrat',Arial,sans-serif; position: absolute; left: 9px; bottom: 6px; background:rgba(255,255,255,0.56); padding:1px 7px; border-radius:5px; z-index:2;}
+    .tileBox .tile-share { position: absolute; right: 8px; bottom: 6px; display: flex; gap: 6px; z-index:2;}
+    .tileBox .tile-action { background:var(--aqua);color:#3d1d26;font-size:0.96em;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Montserrat',Arial,sans-serif;font-weight:700;}
+    .tileBox .tile-action:hover { background: var(--rose); color: #fff;}
+    #addTileBtn {
+      background: linear-gradient(90deg,var(--gold) 80%, var(--rose));
+      color: #34230e;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.18em;
+      font-weight: 700;
+      padding: 14px 40px;
+      margin: 30px auto 12px auto;
+      display: block;
+      box-shadow: 0 5px 14px #f6adc650;
+      cursor:pointer;
+      font-family: 'Montserrat', Arial, sans-serif;
+      transition: background 0.19s;
+    }
+    #addTileBtn:hover {background: linear-gradient(90deg,#ffe568,#f6adc6);}
+    #progressMsg, #affirmationMsg {
+      color: var(--violet);
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size:1.18em;
+      text-align:center;
+      margin:18px 0 10px 0;
+      min-height: 24px;
+      letter-spacing: 0.01em;
+    }
+    #affirmationMsg {color: #6b825c;}
+    .modalBG {
+      display:none; position:fixed;inset:0;z-index:1001;
+      background:rgba(33,23,44,0.78);align-items:center;justify-content:center;
+    }
+    #modalForm {
+      background:var(--panel);
+      padding:29px 20px 22px 20px;
+      border-radius:20px;
+      box-shadow:0 8px 32px #0009;
+      max-width:340px;
+      margin:0 auto;
+      text-align:center;
+      position:relative;
+    }
+    #closeModalBtn {
+      position:absolute;right:10px;top:8px;font-size:1.5em;background:none;border:none;color:#bb966e;cursor:pointer;
+    }
+    #modalForm input[type="text"] {
+      width:95%;padding:7px;font-size:1.05em;border-radius:7px;border:1.5px solid #e4d2a7;margin-bottom:9px;
+      font-family: 'Epilogue', Arial, sans-serif;
+    }
+    #modalForm input[type="file"] {
+      margin-bottom:7px;
+    }
+    #modalForm img {
+      display:none;max-width:110px;margin:0 auto 5px auto;border-radius:11px;box-shadow:0 2px 9px #ad97b155;
+    }
+    #modalMsg {
+      color:#bc2d40;font-size:1em;margin-top:7px;min-height:1.2em;
+      font-family: 'Epilogue', Arial, sans-serif;
+    }
+    #celebrateModal {
+      display:none;position:fixed;z-index:1201;inset:0;background:rgba(246,173,198,0.13);align-items:center;justify-content:center;
+    }
+    #celebrateMsg {
+      background:linear-gradient(130deg,#ffe568,#f6adc6 70%,#c2a2fa 100%);
+      color:#48340a;padding:30px 36px;border-radius:22px;box-shadow:0 7px 44px #3d1d2342;
+      text-align:center;font-size:1.45em;font-family:'Montserrat',Arial,sans-serif;font-weight:700;
+    }
+    #viewMosaicBtn {
+      display: none;
+      margin: 16px auto 0 auto;
+      background: var(--violet);
+      color: #fff;
+      padding: 12px 34px;
+      border: none;
+      border-radius: 13px;
+      font-size: 1.18em;
+      font-weight: 700;
+      box-shadow: 0 3px 14px #c2a2fa44;
+      cursor: pointer;
+      transition: background 0.18s;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    #viewMosaicBtn:hover {background: var(--rose);}
+    #viewMosaicModal {
+      display: none; position: fixed; z-index: 2002; inset:0;
+      background: rgba(47,27,67,0.86); align-items: center; justify-content: center;
+    }
+    #viewMosaicContent {
+      background: #fffbe8; border-radius: 24px; padding: 28px 18px 22px 18px;
+      box-shadow: 0 9px 45px #a2895b38; max-width: 700px; margin:0 auto;
+    }
+    #closeViewMosaicBtn {
+      position:absolute;top:18px;right:24px;font-size:2em;background:none;border:none;color:#b49472;cursor:pointer;
+    }
+    #fullMosaicGrid {
+      display: grid;
+      gap: 0;
+      justify-content: center;
+      align-items: center;
+      background: #fffbe8;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    #pdfExportBtn {
+      background: var(--gold);
+      color: #3e250e;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 1.07em;
+      border: none;
+      border-radius: 11px;
+      padding: 11px 28px;
+      margin: 0 auto 14px auto;
+      display: block;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px #e7d49922;
+    }
+    #pdfExportBtn:hover { background: var(--violet); color:#fff; }
+  </style>
+</head>
+<body>
+<div id="mainWrap">
+  <h1>✨ Inspiration Mosaic ✨</h1>
+  <h2>Share a word, phrase, or image that inspires you.<br> Fill your mosaic, remix, and let your light shine!</h2>
+  <div id="bgSelectorWrap"></div>
+  <div id="levelBar">
+    <span class="levelTag" id="levelTag">Level 1 • 2x3</span>
+    <span id="pointScore">Points: 0</span>
+  </div>
+  <div id="affirmationMsg"></div>
+  <div id="mosaicGrid"></div>
+  <button id="addTileBtn">+ Add to Your Mosaic</button>
+  <button id="viewMosaicBtn">View Your Mosaic</button>
+  <button id="pdfExportBtn">Export as PDF</button>
+  <div id="progressMsg"></div>
+</div>
+
+<!-- Modal for Adding/Editing a Tile -->
+<div class="modalBG" id="modalBG">
+  <div id="modalForm">
+    <button id="closeModalBtn" title="Close">&times;</button>
+    <div style="font-size:1.12em;font-weight:700;color:#bb8737;margin-bottom:7px;">Add Your Inspiration</div>
+    <input type="text" id="tileText" maxlength="30" placeholder="Your word or phrase" style="margin-bottom:6px;"><br>
+    <input type="file" id="tileImage" accept="image/png, image/jpeg, image/webp"><br>
+    <img id="imgPreview"><br>
+    <button id="saveTileBtn" style="margin-top:7px;font-size:1.06em;padding:6px 22px;border-radius:10px;background:var(--aqua);">Add Tile</button>
+    <div id="modalMsg"></div>
+  </div>
+</div>
+<!-- Celebration Modal -->
+<div id="celebrateModal" class="modalBG">
+  <div id="celebrateMsg"></div>
+</div>
+<!-- Mosaic View Modal -->
+<div id="viewMosaicModal" class="modalBG">
+  <div id="viewMosaicContent" style="position:relative;">
+    <button id="closeViewMosaicBtn" title="Close Mosaic View">&times;</button>
+    <h2 style="color:#bb8737;font-size:1.15em;font-family:'Montserrat',Arial,sans-serif;">Your Completed Mosaic</h2>
+    <div id="fullMosaicGrid"></div>
+    <div style="text-align:center;margin:22px 0 8px 0;color:#7d6a42;font-size:1.1em;">This is your unique inspiration artwork.<br>Download each tile, remix, or share with friends!</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- SCRIPT will follow in the next message! -->
+</body>
+</html>
+
+<script>
+// ===== Inspiration Mosaic Core Logic =====
+
+// --- Mosaic backgrounds ---
+const BACKGROUNDS = [
+  { label: "Gold",    css: "linear-gradient(115deg,#fbe79e 0%, #fff6c5 50%, #eed27c 100%)" },
+  { label: "Parchment", css: "repeating-linear-gradient(45deg,#f9f6e3,#f7ecd0 50px,#f7eedf 100px)" },
+  { label: "Aurora",  css: "linear-gradient(120deg,#aee5e6 0%, #f6adc6 52%, #c2a2fa 100%)" },
+  { label: "Gallery", css: "#fffef8" }
+];
+
+// --- Levels: size grows as user levels up
+const LEVELS = [
+  { rows: 2, cols: 3 },  // 6 tiles
+  { rows: 3, cols: 3 },  // 9 tiles
+  { rows: 3, cols: 4 },  // 12 tiles
+  { rows: 4, cols: 4 },  // 16 tiles
+];
+
+let currentLevel = 0;
+let pointScore = 0;
+let mosaicTiles = [];  // [{text, image, owner}]
+let backgroundIdx = 0;
+let dragging = null;   // tile index being dragged
+
+const prompts = [
+  "Share a word that lifts your spirit.",
+  "Upload a photo that inspires you.",
+  "Write a phrase that sparks creativity.",
+  "Add a color or texture you love.",
+  "What's a dream you'd like to share?",
+  "Drop in a memory worth celebrating.",
+  "What is something that gives you hope?",
+  "Contribute a quote or lyric you cherish.",
+  "Add a doodle or tiny drawing (optional).",
+  "What's a sound or feeling you treasure?"
+];
+
+const affirmations = [
+  "You are a beacon of inspiration.",
+  "Every tile is a new beginning.",
+  "Creativity grows with every act.",
+  "Your vision is unique and valued.",
+  "Each share lights up the mosaic.",
+  "Kindness colors your world.",
+  "You bring beauty wherever you go.",
+  "This space shines brighter with you.",
+  "Your story matters.",
+  "Keep building your masterpiece."
+];
+
+// --- Helpers for localStorage
+function saveState() {
+  localStorage.setItem("mosaicTiles", JSON.stringify(mosaicTiles));
+  localStorage.setItem("mosaicLevel", currentLevel);
+  localStorage.setItem("mosaicPoints", pointScore);
+  localStorage.setItem("mosaicBG", backgroundIdx);
+}
+function loadState() {
+  mosaicTiles = JSON.parse(localStorage.getItem("mosaicTiles")||"[]");
+  currentLevel = Number(localStorage.getItem("mosaicLevel"))||0;
+  pointScore = Number(localStorage.getItem("mosaicPoints"))||0;
+  backgroundIdx = Number(localStorage.getItem("mosaicBG"))||0;
+}
+
+// --- Mosaic logic
+function updateLevel() {
+  // If all current tiles are filled, level up!
+  let {rows,cols} = LEVELS[currentLevel];
+  const total = rows*cols;
+  if (mosaicTiles.length < total) {
+    while(mosaicTiles.length < total) mosaicTiles.push({text:"",image:"",owner:""});
+  }
+  if (mosaicTiles.every(t => t.text || t.image) && currentLevel < LEVELS.length-1) {
+    currentLevel += 1;
+    let {rows,cols} = LEVELS[currentLevel];
+    while(mosaicTiles.length < rows*cols) mosaicTiles.push({text:"",image:"",owner:""});
+    showAffirmation("Level up! More tiles unlocked 🎉");
+  }
+  saveState();
+}
+
+// --- Background selector
+function renderBGSelector() {
+  const wrap = document.getElementById("bgSelectorWrap");
+  wrap.innerHTML = "";
+  BACKGROUNDS.forEach((bg, i) => {
+    const btn = document.createElement("button");
+    btn.className = "bgSelectBtn" + (i===backgroundIdx?" selected":"");
+    btn.style.background = bg.css;
+    btn.innerText = bg.label;
+    btn.onclick = ()=>{ backgroundIdx=i; updateBG(); };
+    wrap.appendChild(btn);
+  });
+}
+function updateBG() {
+  document.body.style.background = BACKGROUNDS[backgroundIdx].css;
+  renderBGSelector();
+  saveState();
+}
+
+// --- Prompts and affirmations
+function randomPrompt() {
+  return prompts[Math.floor(Math.random()*prompts.length)];
+}
+function randomAffirmation() {
+  return affirmations[Math.floor(Math.random()*affirmations.length)];
+}
+function showAffirmation(msg) {
+  document.getElementById("affirmationMsg").textContent = msg;
+  setTimeout(()=>{ document.getElementById("affirmationMsg").textContent=""; }, 4200);
+}
+
+// --- Main grid render
+function renderMosaic() {
+  updateLevel();
+  const grid = document.getElementById("mosaicGrid");
+  let {rows, cols} = LEVELS[currentLevel];
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  grid.innerHTML = "";
+  // Ensure enough tiles (esp. after reload)
+  while (mosaicTiles.length < rows*cols) mosaicTiles.push({text:"",image:"",owner:""});
+  if (mosaicTiles.length > rows*cols) mosaicTiles = mosaicTiles.slice(0,rows*cols);
+  // Drag/Remix variables
+  grid.ondragover = (e)=>e.preventDefault();
+  let filled = true;
+  mosaicTiles.forEach((tile, idx) => {
+    const box = document.createElement("div");
+    box.className = "tileBox" + ((tile.text||tile.image)?" filled":"");
+    box.draggable = !!(tile.text||tile.image);
+    box.ondragstart = (e) => { dragging = idx; };
+    box.ondragend = () => { dragging = null; };
+    box.ondragover = (e) => { e.preventDefault(); box.style.outline = "2.5px dashed #c2a2fa"; };
+    box.ondragleave = () => { box.style.outline = ""; };
+    box.ondrop = (e) => {
+      e.preventDefault();
+      box.style.outline = "";
+      if (dragging!==null && dragging!==idx) {
+        // Swap
+        [mosaicTiles[dragging], mosaicTiles[idx]] = [mosaicTiles[idx], mosaicTiles[dragging]];
+        saveState();
+        renderMosaic();
+      }
+    };
+    // Content
+    if (tile.image) {
+      box.innerHTML = `<img src="${tile.image}" alt="Mosaic Tile"><div class="tile-content">${tile.text||""}</div>`;
+    } else if (tile.text) {
+      box.innerHTML = `<div class="tile-content">${tile.text}</div>`;
+    } else {
+      box.innerHTML = `<div class="tile-content" style="opacity:0.6;font-weight:500;font-size:1.03em;">${randomPrompt()}</div>`;
+      filled = false;
+    }
+    // Edit button
+    if (!tile.text && !tile.image) {
+      box.onclick = () => openTileModal(idx);
+    } else {
+      const editBtn = document.createElement("button");
+      editBtn.className = "editBtn";
+      editBtn.title = "Edit";
+      editBtn.innerHTML = "&#9998;";
+      editBtn.onclick = (e) => { e.stopPropagation(); openTileModal(idx); };
+      box.appendChild(editBtn);
+    }
+    // Owner tag
+    if ((tile.text||tile.image) && tile.owner) {
+      const owner = document.createElement("div");
+      owner.className = "tile-owner";
+      owner.textContent = tile.owner;
+      box.appendChild(owner);
+    }
+    grid.appendChild(box);
+  });
+  // Level & points display
+  document.getElementById("levelTag").textContent = `Level ${currentLevel+1} • ${LEVELS[currentLevel].rows}x${LEVELS[currentLevel].cols}`;
+  document.getElementById("pointScore").textContent = `Points: ${pointScore}`;
+  // View Mosaic button
+  document.getElementById("viewMosaicBtn").style.display = filled ? "block" : "none";
+}
+
+// --- Modal for tile add/edit ---
+let editingIdx = null;
+function openTileModal(idx) {
+  editingIdx = idx;
+  document.getElementById("modalBG").style.display = "flex";
+  const t = mosaicTiles[idx];
+  document.getElementById("tileText").value = t.text||"";
+  document.getElementById("tileImage").value = "";
+  document.getElementById("imgPreview").style.display = "none";
+  document.getElementById("modalMsg").textContent = "";
+}
+function closeTileModal() {
+  document.getElementById("modalBG").style.display = "none";
+  editingIdx = null;
+}
+document.getElementById("closeModalBtn").onclick = closeTileModal;
+
+// --- Handle saving new tile
+document.getElementById("saveTileBtn").onclick = function(e){
+  e.preventDefault();
+  const txt = document.getElementById("tileText").value.trim();
+  const imgFile = document.getElementById("tileImage").files[0];
+  if (!txt && !imgFile) { document.getElementById("modalMsg").textContent = "Please enter text or upload an image."; return; }
+  if (txt.length > 30) { document.getElementById("modalMsg").textContent = "Keep your phrase under 30 characters."; return; }
+  if (imgFile) {
+    if (imgFile.size > 1024*1024) { document.getElementById("modalMsg").textContent = "Image must be under 1MB."; return; }
+    if (!['image/png','image/jpeg','image/webp'].includes(imgFile.type)) {
+      document.getElementById("modalMsg").textContent = "Only JPG, PNG, or WebP allowed."; return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      mosaicTiles[editingIdx].text = txt;
+      mosaicTiles[editingIdx].image = evt.target.result;
+      mosaicTiles[editingIdx].owner = "You";
+      saveState();
+      pointScore += 1;
+      saveState();
+      closeTileModal();
+      renderMosaic();
+      showAffirmation(randomAffirmation());
+    };
+    reader.readAsDataURL(imgFile);
+  } else {
+    mosaicTiles[editingIdx].text = txt;
+    mosaicTiles[editingIdx].image = "";
+    mosaicTiles[editingIdx].owner = "You";
+    saveState();
+    pointScore += 1;
+    saveState();
+    closeTileModal();
+    renderMosaic();
+    showAffirmation(randomAffirmation());
+  }
+};
+// Image preview logic
+document.getElementById("tileImage").addEventListener('change', function(){
+  const file = this.files[0];
+  const preview = document.getElementById("imgPreview");
+  if (file) {
+    if (file.size > 1024*1024) { document.getElementById("modalMsg").textContent = "Image must be under 1MB."; this.value = ""; preview.style.display = "none"; return;}
+    if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { document.getElementById("modalMsg").textContent = "Only JPG, PNG, or WebP allowed."; this.value = ""; preview.style.display = "none"; return;}
+    const reader = new FileReader();
+    reader.onload = function(evt){ preview.src = evt.target.result; preview.style.display="block"; };
+    reader.readAsDataURL(file);
+  }
+});
+
+// --- Add tile button
+document.getElementById("addTileBtn").onclick = function(){
+  let idx = mosaicTiles.findIndex(t => (!t.text && !t.image));
+  if (idx < 0) idx = mosaicTiles.length;
+  openTileModal(idx);
+};
+
+// --- View mosaic (popup)
+document.getElementById("viewMosaicBtn").onclick = function() {
+  const grid = document.getElementById("fullMosaicGrid");
+  let {rows, cols} = LEVELS[currentLevel];
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  grid.innerHTML = "";
+  mosaicTiles.forEach((tile)=>{
+    const box = document.createElement("div");
+    box.className = "tileBox filled";
+    if (tile.image) {
+      box.innerHTML = `<img src="${tile.image}" alt="Tile"><div class="tile-content">${tile.text||""}</div>`;
+    } else if (tile.text) {
+      box.innerHTML = `<div class="tile-content">${tile.text}</div>`;
+    }
+    grid.appendChild(box);
+  });
+  document.getElementById("viewMosaicModal").style.display = "flex";
+};
+document.getElementById("closeViewMosaicBtn").onclick = function() {
+  document.getElementById("viewMosaicModal").style.display = "none";
+};
+
+// --- Export as PDF
+document.getElementById("pdfExportBtn").onclick = function(){
+  const { jsPDF } = window.jspdf;
+  let {rows, cols} = LEVELS[currentLevel];
+  const pdf = new jsPDF({ orientation:"landscape", unit:"pt", format:[cols*150+100, rows*150+140] });
+  // background
+  pdf.setFillColor(251,231,158);
+  pdf.rect(0,0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight(), 'F');
+  // grid
+  mosaicTiles.forEach((tile,idx)=>{
+    let x = 50 + (idx%cols)*150, y = 60 + Math.floor(idx/cols)*150;
+    pdf.setDrawColor(207,174,52);
+    pdf.rect(x,y,140,140);
+    if(tile.image){
+      let img = tile.image;
+      pdf.addImage(img, "JPEG", x+8, y+8, 124, 90, "", "FAST");
+      if(tile.text){
+        pdf.setFont("helvetica","bold");
+        pdf.setTextColor(80,60,28);
+        pdf.setFontSize(15);
+        pdf.text(tile.text, x+70, y+120, {align:"center", maxWidth:110});
+      }
+    } else if(tile.text){
+      pdf.setFont("helvetica","bold");
+      pdf.setTextColor(87,80,36);
+      pdf.setFontSize(23);
+      pdf.text(tile.text, x+70, y+80, {align:"center", maxWidth:120});
+    }
+  });
+  pdf.setFont("helvetica","bold");
+  pdf.setTextColor(182,137,40);
+  pdf.setFontSize(18);
+  pdf.text("Inspiration Mosaic – Created at MyArtGallery.online", pdf.internal.pageSize.getWidth()/2, pdf.internal.pageSize.getHeight()-32, {align:"center"});
+  pdf.save("inspiration-mosaic.pdf");
+};
+
+// --- Initial load
+(function(){
+  loadState();
+  updateBG();
+  renderMosaic();
+})();
+</script>
